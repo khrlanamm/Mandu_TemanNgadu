@@ -3,7 +3,6 @@
     <style name="SplashTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/tosca_mandu</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo_scaled</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.Mandu</item>
     </style>
 </resources>

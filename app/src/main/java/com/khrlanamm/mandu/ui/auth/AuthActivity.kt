@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -18,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -32,11 +34,21 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     var isDataReady = false
 
+    companion object {
+        const val EXTRA_FROM_LOGOUT = "extra_from_logout"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val fromLogout = intent.getBooleanExtra(EXTRA_FROM_LOGOUT, false)
+        if (fromLogout) {
+            setTheme(R.style.Theme_Mandu)
+        }
         installSplashScreen()
+
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = ActivityAuthBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -60,7 +72,7 @@ class AuthActivity : AppCompatActivity() {
         auth = Firebase.auth
 
         if (auth.currentUser != null) {
-            navigateToMain()
+            navigateToMain(auth.currentUser)
             return
         }
 
@@ -112,7 +124,7 @@ class AuthActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Log.d("AuthActivity", "signInWithCredential_firebase:success")
-                    navigateToMain()
+                    navigateToMain(task.result.user)
                 } else {
                     Log.w("AuthActivity", "signInWithCredential_firebase:failure", task.exception)
                     Toast.makeText(this, "Autentikasi Firebase gagal", Toast.LENGTH_SHORT).show()
@@ -121,9 +133,15 @@ class AuthActivity : AppCompatActivity() {
             }
     }
 
-    private fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun navigateToMain(user: FirebaseUser?) {
+        if (user == null) return
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("USER_NAME", user.displayName)
+            putExtra("USER_EMAIL", user.email)
+            putExtra("USER_PHOTO_URL", user.photoUrl?.toString())
+            putExtra("USER_UID", user.uid)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         finish()
     }
@@ -147,10 +165,6 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun updateUI(isLoading: Boolean) {
-        if (isLoading) {
-            binding.buttonGoogleSignIn.isEnabled = false
-        } else {
-            binding.buttonGoogleSignIn.isEnabled = true
-        }
+        binding.buttonGoogleSignIn.isEnabled = !isLoading
     }
 }

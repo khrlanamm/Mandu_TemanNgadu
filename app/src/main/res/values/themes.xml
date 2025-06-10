@@ -21,4 +21,10 @@
         <item name="colorOnSurfaceVariant">@color/text_secondary</item> <item name="colorOutline">@color/border_color</item> </style>
 
     <style name="Theme.Mandu" parent="Base.Theme.Mandu" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/tosca_mandu</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo_scaled</item>
+        <item name="postSplashScreenTheme">@style/Theme.Mandu</item>
+    </style>
 </resources>
