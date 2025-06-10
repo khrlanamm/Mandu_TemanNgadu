@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Mandu</string>
+
+    <string name="action_history">Riwayat Laporan</string>
+    <string name="action_account">Profil Pengguna</string>
+
+    <string name="add_report">Tambahkan Laporan</string>
+
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
