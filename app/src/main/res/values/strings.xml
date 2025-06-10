@@ -6,6 +6,14 @@
 
     <string name="add_report">Tambahkan Laporan</string>
 
+    <!--Onboarding-->
+    <string name="welcome">Selamat Datang</string>
+    <string name="text_welcome">Selamat Datang,</string>
+    <string name="logo_landscape">Teman Ngadu</string>
+    <string name="vintage">Stop Bullying</string>
+    <string name="long_auth_description">Ayo laporkan segala tindakan perundungan yang kamu alami, tidak ada tempat untuk Bullying!</string>
+    <string name="google_sign_in">Daftar / Masuk</string>
+
     <!--Profile-->
     <string name="name">Nama</string>
     <string name="email">Email</string>

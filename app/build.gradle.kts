@@ -59,6 +59,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.play.services.auth)
+
     implementation(platform(libs.firebase.bom))
 
     implementation(libs.androidx.recyclerview)
