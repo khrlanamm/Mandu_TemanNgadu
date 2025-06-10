@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="tosca_mandu">#1DABC3</color>
+    <color name="tosca_mandu_light">#E4F6F9</color> <color name="tosca_mandu_dark">#007C92</color> <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="background_light">#F0FAFC</color> <color name="text_primary">#212121</color> <color name="text_secondary">#8A8A8A</color> <color name="border_color">#DDE2E5</color> <color name="status_success">#2E7D32</color>
+    <color name="status_warning">#FFB74D</color>
+    <color name="status_error">#D32F2F</color>
 </resources>

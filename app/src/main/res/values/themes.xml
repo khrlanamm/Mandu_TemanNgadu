@@ -1,9 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Mandu" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+        <item name="colorPrimary">@color/tosca_mandu</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/tosca_mandu_light</item>
+        <item name="colorOnPrimaryContainer">@color/tosca_mandu_dark</item>
+
+        <item name="colorSecondary">@color/tosca_mandu</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/tosca_mandu_light</item>
+        <item name="colorOnSecondaryContainer">@color/tosca_mandu_dark</item>
+
+        <item name="colorError">@color/status_error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">#F9DEDC</item>
+        <item name="colorOnErrorContainer">#410E0B</item>
+
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurface">@color/white</item> <item name="colorOnSurface">@color/text_primary</item> <item name="colorSurfaceVariant">@color/background_light</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item> <item name="colorOutline">@color/border_color</item> </style>
 
     <style name="Theme.Mandu" parent="Base.Theme.Mandu" />
 </resources>
