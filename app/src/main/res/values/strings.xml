@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Mandu</string>
 
-    <string name="action_history">Riwayat Laporan</string>
+    <!--Home-->
     <string name="add_report">Tambahkan Laporan</string>
 
     <!--Onboarding-->
@@ -29,5 +29,11 @@
         <item>Sangat Sering</item>
         <item>Setiap Hari</item>
     </string-array>
+
+    <!--History-->
+    <string name="action_history">Riwayat Laporan</string>
+
+    <!--Detail-->
+    <string name="action_detail">Rincian Laporan</string>
 
 </resources>
