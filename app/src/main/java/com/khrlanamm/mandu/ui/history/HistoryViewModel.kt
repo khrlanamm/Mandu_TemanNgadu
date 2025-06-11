@@ -8,8 +8,8 @@ import com.khrlanamm.mandu.ui.history.data.HistoryRepository
 import com.khrlanamm.mandu.ui.history.data.Report
 import kotlinx.coroutines.launch
 
-// Data class untuk menampung statistik
-data class Stats(val count: Int = 0, val percentage: Int = 0)
+// Mengubah tipe data 'percentage' menjadi Float untuk presisi desimal
+data class Stats(val count: Int = 0, val percentage: Float = 0f)
 
 class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() {
 
@@ -65,11 +65,11 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
         }
     }
 
-    // Fungsi untuk menghitung statistik
+    // Fungsi untuk menghitung statistik dengan presisi float
     private fun calculateStats(reports: List<Report>) {
         if (reports.isEmpty()) {
-            _reportedStats.value = Stats(0, 0)
-            _handledStats.value = Stats(0, 0)
+            _reportedStats.value = Stats(0, 0f)
+            _handledStats.value = Stats(0, 0f)
             return
         }
 
@@ -77,8 +77,9 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
         val reportedCount = reports.count { it.status.equals("terlapor", ignoreCase = true) }
         val handledCount = reports.count { it.status.equals("ditangani", ignoreCase = true) }
 
-        val reportedPercentage = if (total > 0) (reportedCount * 100 / total) else 0
-        val handledPercentage = if (total > 0) (handledCount * 100 / total) else 0
+        // Kalkulasi diubah menjadi float untuk mendapatkan nilai desimal
+        val reportedPercentage = if (total > 0) (reportedCount * 100f / total) else 0f
+        val handledPercentage = if (total > 0) (handledCount * 100f / total) else 0f
 
         _reportedStats.value = Stats(reportedCount, reportedPercentage)
         _handledStats.value = Stats(handledCount, handledPercentage)

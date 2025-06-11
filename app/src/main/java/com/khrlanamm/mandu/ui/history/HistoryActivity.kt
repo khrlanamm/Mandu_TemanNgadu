@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityHistoryBinding
 import com.khrlanamm.mandu.ui.history.data.HistoryRepository
+import java.util.Locale
 
 class HistoryActivity : AppCompatActivity() {
 
@@ -84,13 +85,17 @@ class HistoryActivity : AppCompatActivity() {
         }
 
         viewModel.reportedStats.observe(this) { stats ->
-            binding.tvStatsReported.text = "Terlapor : ${stats.count} (${stats.percentage}%)"
-            binding.progressReported.progress = stats.percentage
+            // Memformat persentase menjadi 2 angka di belakang koma
+            val formattedPercentage = String.format(Locale.US, "%.2f", stats.percentage)
+            binding.tvStatsReported.text = "Terlapor : ${stats.count} (${formattedPercentage}%)"
+            binding.progressReported.progress = stats.percentage.toInt()
         }
 
         viewModel.handledStats.observe(this) { stats ->
-            binding.tvStatsHandled.text = "Ditangani : ${stats.count} (${stats.percentage}%)"
-            binding.progressHandled.progress = stats.percentage
+            // Memformat persentase menjadi 2 angka di belakang koma
+            val formattedPercentage = String.format(Locale.US, "%.2f", stats.percentage)
+            binding.tvStatsHandled.text = "Ditangani : ${stats.count} (${formattedPercentage}%)"
+            binding.progressHandled.progress = stats.percentage.toInt()
         }
     }
 
