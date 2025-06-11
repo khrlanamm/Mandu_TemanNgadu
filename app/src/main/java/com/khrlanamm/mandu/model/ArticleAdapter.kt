@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.ui.article.ArticleDetailActivity
 
+@Suppress("DEPRECATION")
 class ArticleAdapter(private val context: Context, private var articles: List<Article>) :
     RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() {
 
@@ -45,7 +46,6 @@ class ArticleAdapter(private val context: Context, private var articles: List<Ar
                     if (article.url.startsWith("http://") || article.url.startsWith("https://")) {
                         val intent = Intent(context, ArticleDetailActivity::class.java).apply {
                             putExtra(ArticleDetailActivity.EXTRA_URL, article.url)
-                            putExtra(ArticleDetailActivity.EXTRA_TITLE, article.title)
                         }
                         context.startActivity(intent)
                     }

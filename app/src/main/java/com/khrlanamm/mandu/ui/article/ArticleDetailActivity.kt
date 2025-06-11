@@ -14,7 +14,6 @@ class ArticleDetailActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_URL = "extra_url"
-        const val EXTRA_TITLE = "extra_title"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,20 +22,9 @@ class ArticleDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val url = intent.getStringExtra(EXTRA_URL)
-        val title = intent.getStringExtra(EXTRA_TITLE)
-
-        setupToolbar(title)
 
         if (url != null) {
             setupWebView(url)
-        }
-    }
-
-    private fun setupToolbar(title: String?) {
-        binding.toolbarDetail.title = title ?: "Detail Artikel"
-
-        binding.toolbarDetail.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
         }
     }
 

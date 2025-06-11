@@ -56,7 +56,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appbar">
 
-        <!-- CardView sebagai container form dengan sudut membulat -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/form_card"
             android:layout_width="match_parent"
@@ -72,7 +71,6 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Judul Form -->
                 <TextView
                     android:id="@+id/tv_form_title"
                     android:layout_width="match_parent"
@@ -82,7 +80,6 @@
                     android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:textStyle="bold" />
 
-                <!-- Keterangan Anonim -->
                 <TextView
                     android:id="@+id/tv_form_subtitle"
                     android:layout_width="match_parent"
@@ -92,7 +89,6 @@
                     android:text="Laporan Bersifat Anonim"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-                <!-- Pilihan Korban atau Saksi -->
                 <RadioGroup
                     android:id="@+id/radio_group_role"
                     android:layout_width="match_parent"
@@ -115,7 +111,6 @@
                         android:text="Saksi" />
                 </RadioGroup>
 
-                <!-- Input Tanggal Bullying (Gunakan Date Picker dari kode Kotlin/Java) -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_tanggal"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -134,7 +129,6 @@
                         android:focusable="false" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Input Lokasi Bullying -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_lokasi"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -152,7 +146,6 @@
                         tools:text="Kelas 11 C SMANDI" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Dropdown Frekuensi Bullying -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_frekuensi"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -190,7 +183,6 @@
                         android:minLines="3" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Input Nomor WhatsApp -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_whatsapp"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -208,8 +200,6 @@
                         tools:text="081234567890" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <!-- Placeholder untuk preview gambar -->
                 <ImageView
                     android:id="@+id/iv_preview_bukti"
                     android:layout_width="match_parent"
@@ -220,7 +210,6 @@
                     android:visibility="gone"
                     tools:src="@tools:sample/backgrounds/scenic" />
 
-                <!-- Tombol Unggah Gambar -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_unggah_bukti"
                     style="@style/Widget.Material3.Button.OutlinedButton"
