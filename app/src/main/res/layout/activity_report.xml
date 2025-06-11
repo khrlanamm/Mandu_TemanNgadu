@@ -118,29 +118,31 @@
                 <!-- Input Tanggal Bullying (Gunakan Date Picker dari kode Kotlin/Java) -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_tanggal"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Tanggal Bullying">
+                    android:hint="Tanggal Bullying"
+                    app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_tanggal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="false"
                         android:clickable="true"
-                        android:drawableEnd="@drawable/ic_date_range" />
+                        android:drawableEnd="@drawable/ic_date_range"
+                        android:focusable="false" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Input Lokasi Bullying -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_lokasi"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Lokasi Bullying">
+                    android:hint="Lokasi Bullying"
+                    app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_lokasi"
@@ -157,23 +159,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Frekuensi Bullying">
+                    android:hint="Frekuensi Bullying"
+                    app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <AutoCompleteTextView
                         android:id="@+id/actv_frekuensi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
+                        android:popupBackground="@color/tosca_mandu_light"
                         tools:ignore="LabelFor" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_deskripsi"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Deskripsi">
+                    android:hint="Deskripsi"
+                    app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_deskripsi"
@@ -188,11 +193,12 @@
                 <!-- Input Nomor WhatsApp -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_whatsapp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Nomor yang dapat dihubungi (WhatsApp)">
+                    android:hint="Nomor yang dapat dihubungi (WhatsApp)"
+                    app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_whatsapp"
@@ -212,7 +218,7 @@
                     android:contentDescription="Preview Bukti"
                     android:scaleType="centerCrop"
                     android:visibility="gone"
-                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                    tools:src="@tools:sample/backgrounds/scenic" />
 
                 <!-- Tombol Unggah Gambar -->
                 <com.google.android.material.button.MaterialButton
@@ -224,12 +230,11 @@
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:text="Unggah Gambar/Bukti"
-                    app:cornerRadius="24dp" />
-
+                    app:cornerRadius="24dp"
+                    app:strokeColor="@color/tosca_mandu_dark"
+                    android:textColor="@color/tosca_mandu_dark"/>
             </LinearLayout>
-
         </com.google.android.material.card.MaterialCardView>
-
     </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
@@ -243,5 +248,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

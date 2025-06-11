@@ -113,7 +113,8 @@ class ReportActivity : AppCompatActivity() {
 
     private fun setupDropdown() {
         val frekuensiOptions = resources.getStringArray(R.array.frekuensi_bullying_options)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, frekuensiOptions)
+        // Menggunakan layout kustom untuk item dropdown
+        val adapter = ArrayAdapter(this, R.layout.list_item_frekuensi, frekuensiOptions)
         binding.actvFrekuensi.setAdapter(adapter)
     }
 
@@ -252,7 +253,8 @@ class ReportActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         binding.buttonKirimLaporan.isEnabled = !isLoading
         binding.buttonUnggahBukti.isEnabled = !isLoading
-        binding.nestedScrollView.isEnabled = !isLoading
+        // Seharusnya tidak menonaktifkan scroll view, agar pengguna tetap bisa melihat form
+        // binding.nestedScrollView.isEnabled = !isLoading
     }
 
     override fun onSupportNavigateUp(): Boolean {
