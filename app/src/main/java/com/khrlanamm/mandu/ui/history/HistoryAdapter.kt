@@ -11,7 +11,7 @@ import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ItemHistoryBinding
 import com.khrlanamm.mandu.ui.history.data.Report
 
-class HistoryAdapter : ListAdapter<Report, HistoryAdapter.HistoryViewHolder>(DIFF_CALLBACK) {
+class HistoryAdapter(private val onItemClick: (Report) -> Unit) : ListAdapter<Report, HistoryAdapter.HistoryViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val binding = ItemHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -20,17 +20,19 @@ class HistoryAdapter : ListAdapter<Report, HistoryAdapter.HistoryViewHolder>(DIF
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val report = getItem(position)
-        holder.bind(report)
+        // Kirim report dan listener ke ViewHolder
+        holder.bind(report, onItemClick)
     }
 
     class HistoryViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(report: Report) {
+        // Tambahkan parameter onItemClick pada fungsi bind
+        fun bind(report: Report, onItemClick: (Report) -> Unit) {
             val context = binding.root.context
             binding.apply {
                 // Memuat gambar dengan Glide, jika null pakai placeholder
                 Glide.with(context)
                     .load(report.urlBukti)
-                    .placeholder(R.drawable.placeholder_image) // Pastikan drawable ini ada
+                    .placeholder(R.drawable.placeholder_image)
                     .error(R.drawable.placeholder_image)
                     .into(ivReportImage)
 
@@ -64,6 +66,10 @@ class HistoryAdapter : ListAdapter<Report, HistoryAdapter.HistoryViewHolder>(DIF
                     }
                     else -> tvRole.visibility = ViewGroup.GONE
                 }
+            }
+            // Set OnClickListener pada item view
+            itemView.setOnClickListener {
+                onItemClick(report)
             }
         }
     }

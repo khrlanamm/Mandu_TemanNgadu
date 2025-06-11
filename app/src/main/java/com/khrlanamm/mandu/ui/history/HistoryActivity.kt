@@ -1,5 +1,6 @@
 package com.khrlanamm.mandu.ui.history
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -10,7 +11,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityHistoryBinding
+import com.khrlanamm.mandu.ui.detail.DetailActivity
 import com.khrlanamm.mandu.ui.history.data.HistoryRepository
+import com.khrlanamm.mandu.ui.history.data.Report
 import java.util.Locale
 
 class HistoryActivity : AppCompatActivity() {
@@ -34,7 +37,6 @@ class HistoryActivity : AppCompatActivity() {
         setupFilterDropdown()
         observeViewModel()
 
-        // Memuat data saat activity dibuat
         if (savedInstanceState == null) {
             viewModel.loadReports()
         }
@@ -49,11 +51,20 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        historyAdapter = HistoryAdapter()
+        // Inisialisasi adapter dengan click listener
+        historyAdapter = HistoryAdapter { report ->
+            navigateToDetail(report)
+        }
         binding.rvHistory.apply {
             layoutManager = LinearLayoutManager(this@HistoryActivity)
             adapter = historyAdapter
         }
+    }
+
+    private fun navigateToDetail(report: Report) {
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.EXTRA_REPORT, report)
+        startActivity(intent)
     }
 
     private fun setupFilterDropdown() {
@@ -61,7 +72,6 @@ class HistoryActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filterOptions)
         binding.actvFilter.setAdapter(adapter)
 
-        // Listener untuk saat item filter dipilih
         binding.actvFilter.setOnItemClickListener { _, _, position, _ ->
             val selectedFilter = filterOptions[position]
             viewModel.filterReports(selectedFilter)
@@ -76,7 +86,7 @@ class HistoryActivity : AppCompatActivity() {
         viewModel.toastMessage.observe(this) { message ->
             message?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-                viewModel.onToastShown() // Reset pesan agar tidak ditampilkan lagi
+                viewModel.onToastShown()
             }
         }
 
@@ -85,14 +95,12 @@ class HistoryActivity : AppCompatActivity() {
         }
 
         viewModel.reportedStats.observe(this) { stats ->
-            // Memformat persentase menjadi 2 angka di belakang koma
             val formattedPercentage = String.format(Locale.US, "%.2f", stats.percentage)
             binding.tvStatsReported.text = "Terlapor : ${stats.count} (${formattedPercentage}%)"
             binding.progressReported.progress = stats.percentage.toInt()
         }
 
         viewModel.handledStats.observe(this) { stats ->
-            // Memformat persentase menjadi 2 angka di belakang koma
             val formattedPercentage = String.format(Locale.US, "%.2f", stats.percentage)
             binding.tvStatsHandled.text = "Ditangani : ${stats.count} (${formattedPercentage}%)"
             binding.progressHandled.progress = stats.percentage.toInt()
