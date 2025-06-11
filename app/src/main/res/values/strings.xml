@@ -36,4 +36,50 @@
     <!--Detail-->
     <string name="action_detail">Rincian Laporan</string>
 
+    <!--Dummy Article-->
+    <integer-array name="tempdata_article_image">
+        <item>@drawable/tempdata_article_image1</item>
+        <item>@drawable/tempdata_article_image2</item>
+        <item>@drawable/tempdata_article_image3</item>
+        <item>@drawable/tempdata_article_image4</item>
+        <item>@drawable/tempdata_article_image5</item>
+        <item>@drawable/tempdata_article_image6</item>
+        <item>@drawable/tempdata_article_image7</item>
+    </integer-array>
+
+    <string-array name="tempdata_article_title">
+        <item>Bullying Bukan Tindakan Terpuji: Mencegah Bullying di Sekolah</item>
+        <item>Bullying di Sekolah: Pengertian, Jenis, dan Ciri Pelakunya</item>
+        <item>Jangan Lagi Diam, Bullying Itu Bukan Hal Biasa</item>
+        <item>Korban Bullying? Jangan Takut Melapor, Sekarang Pelaporan Jadi Lebih Mudah!</item>
+        <item>Jeratan Gelap Bullying di Dunia Pendidikan Indonesia</item>
+        <item>Berani Melapor Kasus Bullying</item>
+        <item>Simpan Bukti Digital, Korban Bullying Harus Berani Lapor</item>
+    </string-array>
+
+    <string-array name="tempdata_article_description">
+        <item>Perundungan adalah masalah serius yang dapat mempengaruhi kehidupan anak dan remaja di sekolah. Penting untuk memahami dampak negatifnya dan cara mencegahnya agar sekolah menjadi tempat yang aman.</item>
+        <item>Bullying merupakan salah satu dari tiga dosa besar di dunia pendidikan dan dapat menimbulkan kerugian bagi korban. Pemerintah mengambil langkah serius dalam penanganannya di sekolah.</item>
+        <item>Maraknya kasus perundungan menandakan kurangnya sistem perlindungan efektif. Semua pihak perlu bekerja sama menanamkan nilai toleransi, empati, dan keberanian melawan ketidakadilan.</item>
+        <item>Perkembangan teknologi mempermudah berbagai aspek kehidupan, termasuk layanan publik seperti sistem pelaporan kasus bullying yang kini lebih mudah diakses masyarakat.</item>
+        <item>Perilaku bullying masih membayangi pelajar Indonesia. Pendidikan dari keluarga harus digalakkan untuk membebaskan institusi pendidikan dari belenggu bullying yang merenggut rasa aman.</item>
+        <item>Bullying adalah segala bentuk penindasan atau kekerasan yang dilakukan dengan sengaja oleh satu orang atau kelompok yang lebih kuat dengan tujuan menyakiti dan dilakukan secara terus menerus.</item>
+        <item>Perundungan di dunia digital adalah perilaku agresif menggunakan media elektronik secara berulang terhadap korban yang dianggap tidak mudah melakukan perlawanan. Penting untuk menyimpan bukti digital.</item>
+    </string-array>
+
+    <string-array name="tempdata_article_url">
+        <item>https://ditsmp.kemendikdasmen.go.id/ragam-informasi/article/bullying-bukan-tindakan-terpuji-mencegah-bullying-di-sekolah</item>
+        <item>https://www.detik.com/edu/detikpedia/d-7463301/bullying-di-sekolah-pengertian-jenis-dan-ciri-pelakunya</item>
+        <item>https://www.kompasiana.com/nurhikmah2246/683f0eb2ed64156c3909caa2/jangan-lagi-diam-bullying-itu-bukan-hal-biasa</item>
+        <item>https://kumparan.com/khanif-yunan-pratama/korban-bullying-jangan-takut-melapor-sekarang-pelaporan-jadi-lebih-mudah-23qIITBWC6Y</item>
+        <item>https://www.ums.ac.id/berita/perspektif/jeratan-gelap-bullying-di-dunia-pendidikan-indonesia</item>
+        <item>https://radarsemarang.jawapos.com/opini/721390319/berani-melapor-kasus-bullying</item>
+        <item>https://infojateng.id/read/13752/simpan-bukti-digital-korban-bullying-harus-berani-lapor/</item>
+    </string-array>
+
+    <!--article-->
+    <string name="article_summary">Lorem Ipsum Dolor Sir Amet</string>
+    <string name="article_title_data">Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel</string>
+    <string name="article_description_data">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
 </resources>
