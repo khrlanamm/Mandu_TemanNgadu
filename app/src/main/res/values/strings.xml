@@ -3,6 +3,13 @@
 
     <!--Home-->
     <string name="add_report">Tambahkan Laporan</string>
+    <string name="article_title">Edukasi</string>
+    <string name="article_description">Ayo baca artikel terkait Bullying di Sekolah</string>
+    <string name="searchArticle">Cari Artikel…</string>
+    <string name="vintage_image_description">Ayo Berani Lapor!</string>
+    <string name="report_icon">Laporkan Bullying</string>
+    <string name="report_bullying">Laporkan Bullying</string>
+
 
     <!--Onboarding-->
     <string name="welcome">Selamat Datang,</string>
