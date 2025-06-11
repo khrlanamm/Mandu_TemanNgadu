@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ReportActivity::class.java)
             startActivity(intent)
         }
+
+        binding.opening.setOnClickListener {
+            val intent = Intent(this, ReportActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
