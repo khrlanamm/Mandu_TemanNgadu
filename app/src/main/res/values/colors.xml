@@ -6,4 +6,10 @@
     <color name="background_light">#F0FAFC</color> <color name="text_primary">#212121</color> <color name="text_secondary">#8A8A8A</color> <color name="border_color">#DDE2E5</color> <color name="status_success">#2E7D32</color>
     <color name="status_warning">#FFB74D</color>
     <color name="status_error">#D32F2F</color>
+
+    <color name="background_light_gray">#F5F5F5</color>
+    <color name="status_blue">#2196F3</color>
+    <color name="status_green">#4CAF50</color>
+    <color name="role_yellow">#FFC107</color>
+    <color name="role_magenta">#E91E63</color>
 </resources>

@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.khrlanamm.mandu.R
@@ -32,6 +33,7 @@ class ReportActivity : AppCompatActivity() {
 
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
+    private lateinit var auth: FirebaseAuth // Tambahkan instance FirebaseAuth
 
     private var imageUri: Uri? = null
 
@@ -65,8 +67,10 @@ class ReportActivity : AppCompatActivity() {
         binding = ActivityReportBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Inisialisasi Firebase
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
+        auth = FirebaseAuth.getInstance() // Inisialisasi FirebaseAuth
 
         setupToolbar()
         setupDropdown()
@@ -113,7 +117,6 @@ class ReportActivity : AppCompatActivity() {
 
     private fun setupDropdown() {
         val frekuensiOptions = resources.getStringArray(R.array.frekuensi_bullying_options)
-        // Menggunakan layout kustom untuk item dropdown
         val adapter = ArrayAdapter(this, R.layout.list_item_frekuensi, frekuensiOptions)
         binding.actvFrekuensi.setAdapter(adapter)
     }
@@ -150,6 +153,11 @@ class ReportActivity : AppCompatActivity() {
         }
 
         binding.buttonKirimLaporan.setOnClickListener {
+            // Tambahkan pengecekan apakah pengguna sudah login
+            if (auth.currentUser == null) {
+                Toast.makeText(this, "Anda harus masuk untuk dapat mengirim laporan.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             if (validateInput()) {
                 uploadImageAndSaveReport()
             }
@@ -221,10 +229,19 @@ class ReportActivity : AppCompatActivity() {
     }
 
     private fun saveReportToFirestore(imageUrl: String?) {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            showLoading(false)
+            Toast.makeText(this, "Gagal mengidentifikasi pengguna. Mohon coba lagi.", Toast.LENGTH_LONG).show()
+            return
+        }
+
         val selectedRole = if (binding.radioKorban.isChecked) "Korban" else "Saksi"
 
+        // Buat objek laporan dengan data yang relevan
         val report = hashMapOf(
             "id" to UUID.randomUUID().toString(),
+            "userId" to userId,
             "peran" to selectedRole,
             "tanggalBullying" to binding.etTanggal.text.toString(),
             "lokasi" to binding.etLokasi.text.toString(),
@@ -253,8 +270,6 @@ class ReportActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         binding.buttonKirimLaporan.isEnabled = !isLoading
         binding.buttonUnggahBukti.isEnabled = !isLoading
-        // Seharusnya tidak menonaktifkan scroll view, agar pengguna tetap bisa melihat form
-        // binding.nestedScrollView.isEnabled = !isLoading
     }
 
     override fun onSupportNavigateUp(): Boolean {
