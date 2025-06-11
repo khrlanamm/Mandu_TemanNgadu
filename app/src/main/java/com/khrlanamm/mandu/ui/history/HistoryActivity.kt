@@ -36,10 +36,11 @@ class HistoryActivity : AppCompatActivity() {
         setupRecyclerView()
         setupFilterDropdown()
         observeViewModel()
+    }
 
-        if (savedInstanceState == null) {
-            viewModel.loadReports()
-        }
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadReports()
     }
 
     private fun setupToolbar() {
@@ -51,7 +52,6 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // Inisialisasi adapter dengan click listener
         historyAdapter = HistoryAdapter { report ->
             navigateToDetail(report)
         }

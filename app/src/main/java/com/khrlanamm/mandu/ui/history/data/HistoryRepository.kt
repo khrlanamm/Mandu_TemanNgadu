@@ -12,26 +12,25 @@ class HistoryRepository {
     private val auth = FirebaseAuth.getInstance()
     private val reportsCollection = db.collection("reports")
 
-    // Fungsi untuk mendapatkan riwayat laporan
     suspend fun getHistoryReports(): Result<List<Report>> {
         return try {
             val currentUser = auth.currentUser
-            if (currentUser == null) {
-                return Result.failure(Exception("Pengguna tidak terautentikasi."))
-            }
+                ?: return Result.failure(Exception("Pengguna tidak terautentikasi."))
 
-            // Tentukan query berdasarkan peran pengguna (admin atau user biasa)
             val query = if (AdminUID.isAdmin(currentUser.uid)) {
-                // Admin: ambil semua laporan
                 reportsCollection.orderBy("timestamp", Query.Direction.DESCENDING)
             } else {
-                // User biasa: ambil laporan milik sendiri
                 reportsCollection.whereEqualTo("userId", currentUser.uid)
                     .orderBy("timestamp", Query.Direction.DESCENDING)
             }
 
             val snapshot = query.get().await()
-            val reports = snapshot.toObjects(Report::class.java)
+
+            // PERBAIKAN: Memetakan setiap dokumen dan menyalin ID-nya ke dalam objek Report
+            val reports = snapshot.documents.mapNotNull { document ->
+                // Mengubah dokumen menjadi objek Report, lalu menyalinnya dengan ID yang benar
+                document.toObject(Report::class.java)?.copy(id = document.id)
+            }
             Result.success(reports)
         } catch (e: Exception) {
             Result.failure(e)
