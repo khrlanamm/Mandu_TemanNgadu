@@ -4,7 +4,7 @@
     <!--Home-->
     <string name="add_report">Tambahkan Laporan</string>
     <string name="article_title">Edukasi</string>
-    <string name="article_description">Ayo baca artikel terkait Bullying di Sekolah</string>
+    <string name="article_description">Ayo baca artikel terkait Bullying</string>
     <string name="searchArticle">Cari Artikel…</string>
     <string name="vintage_image_description">Ayo Berani Lapor!</string>
     <string name="report_icon">Laporkan Bullying</string>
@@ -43,16 +43,35 @@
     <!--Detail-->
     <string name="action_detail">Rincian Laporan</string>
 
+
+    <!--article-->
+    <string name="article_summary">Lorem Ipsum Dolor Sir Amet</string>
+    <string name="article_title_data">Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel</string>
+    <string name="article_description_data">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+
     <!--Dummy Article-->
-    <integer-array name="tempdata_article_image">
-        <item>@drawable/tempdata_article_image1</item>
-        <item>@drawable/tempdata_article_image2</item>
-        <item>@drawable/tempdata_article_image3</item>
-        <item>@drawable/tempdata_article_image4</item>
-        <item>@drawable/tempdata_article_image5</item>
-        <item>@drawable/tempdata_article_image6</item>
-        <item>@drawable/tempdata_article_image7</item>
-    </integer-array>
+    <string-array name="tempdata_article_image">
+        <item>https://ditsmp.kemdikbud.go.id/psmplog/storage/uploads/ragaminformasi/1726791527_[DIT%20SMP]%20Benner%20Bullying%20-%2018%20Sept-01.png</item>
+        <item>https://akcdn.detik.net.id/community/media/visual/2024/05/09/kampanye-anti-bullying-lewat-mural-2_169.jpeg</item>
+        <item>https://assets.kompasiana.com/items/album/2025/06/03/whatsapp-image-2025-06-03-at-20-43-07-32869495-683f0e6ded641567e83375f5.jpg</item>
+        <item>https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,f_auto,q_auto:best,w_640/v1634025439/01jbrqmxqhz8g0z29f3m3ythxj.jpg</item>
+        <item>https://storage.googleapis.com/web_ums_object_storage/uploads/OHMOon0RxQgZhDOtaCtsT9tQLd2FECv6Q2yj620o.webp</item>
+        <item>https://assets.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/radarsemarang/2022/01/Dzakiyahh_rsz.jpg</item>
+        <item>https://infojateng.id/wp-content/uploads/2021/08/54375-ilustrasi-bully-di-sekolah.jpg</item>
+        <item>https://radarbanyumas.disway.id/upload/34f548588506301b46b689517a22cca1.jpg</item>
+        <item>https://www.ganto.co/photos/artikel/220224073405_menantang-tradisi-kejam-melawan-budaya-bullying-di.jpeg</item>
+        <item>https://primayahospital.b-cdn.net/wp-content/uploads/2023/12/Dampak-Bullying-pada-Kesehatan-Fisik-dan-Mental-1536x864.jpg</item>
+        <item>https://www.its.ac.id/news/wp-content/uploads/sites/2/2022/12/unicef-1.png</item>
+        <item>https://cakrawalanews.co/wp-content/uploads/2024/02/ilustrasi-1.jpg</item>
+        <item>https://cdn.rri.co.id/berita/Bukittinggi/o/1717659174362-bullying/ko88pb7kshdrn59.jpeg</item>
+        <item>https://lingkarjateng.id/wp-content/uploads/2023/10/Ayo-Bangkit.jpg</item>
+        <item>https://mommiesdaily.com/wp-content/uploads/2017/07/bullying-mommiesdaily.jpg</item>
+        <item>https://bincangmuslimah.com/wp-content/uploads/2020/07/ZDG2OEKBZNGEFNVCRQNE2PR4CQ.jpg</item>
+        <item>https://www.rsmardirahayu.com/wp-content/uploads/2023/08/BULLYING-DARI-PERSPEKTIF-PSIKOLOGI-copy-1536x1536.jpg</item>
+        <item>https://blog-static.mamikos.com/wp-content/uploads/2024/06/Contoh-Bullying-Verbal-dan-Non-Verbal-Beserta-Penyebab-dan-Cara-Mengatasinya.jpg.webp</item>
+        <item>https://andreasnataatmadja.com/wp-content/uploads/2018/07/img_5305.jpg</item>
+        <item>https://sigap.tanotofoundation.org/wp-content/uploads/2023/10/bullying-1536x1079.jpg</item>
+    </string-array>
 
     <string-array name="tempdata_article_title">
         <item>Bullying Bukan Tindakan Terpuji: Mencegah Bullying di Sekolah</item>
@@ -62,6 +81,19 @@
         <item>Jeratan Gelap Bullying di Dunia Pendidikan Indonesia</item>
         <item>Berani Melapor Kasus Bullying</item>
         <item>Simpan Bukti Digital, Korban Bullying Harus Berani Lapor</item>
+        <item>Tips untuk guru dalam mengatasi perundungan (bullying)</item>
+        <item>Menantang Tradisi Kejam: Melawan Budaya Bullying di Indonesia</item>
+        <item>Dampak Bullying pada Kesehatan Fisik dan Mental</item>
+        <item>Cyberbullying: Apa itu dan bagaimana menghentikannya</item>
+        <item>Kisah Inspiratif Bangkit dari Bullying Menuju Kesuksesan</item>
+        <item>Bangkit Dari Orang Yang Suka Bullying</item>
+        <item>Ayo Bangkit! 10 Cara Hilangkan Trauma Bullying Ini Perlu Dicoba</item>
+        <item>Keluarkan Pembully dari Sekolah, Tepatkah?</item>
+        <item>Kata Nabi Tentang Seseorang yang Senang Membully Temannya</item>
+        <item>BULLYING DARI PERSPEKTIF PSIKOLOGI</item>
+        <item>18 Contoh Bullying Verbal dan Non Verbal beserta Penyebab dan Cara Mengatasinya</item>
+        <item>Bullying dalam pandangan Kristen</item>
+        <item>Mulai dari Rumah, Ajarkan Anak Tidak Jadi Pembully</item>
     </string-array>
 
     <string-array name="tempdata_article_description">
@@ -72,6 +104,19 @@
         <item>Perilaku bullying masih membayangi pelajar Indonesia. Pendidikan dari keluarga harus digalakkan untuk membebaskan institusi pendidikan dari belenggu bullying yang merenggut rasa aman.</item>
         <item>Bullying adalah segala bentuk penindasan atau kekerasan yang dilakukan dengan sengaja oleh satu orang atau kelompok yang lebih kuat dengan tujuan menyakiti dan dilakukan secara terus menerus.</item>
         <item>Perundungan di dunia digital adalah perilaku agresif menggunakan media elektronik secara berulang terhadap korban yang dianggap tidak mudah melakukan perlawanan. Penting untuk menyimpan bukti digital.</item>
+        <item>Apa yang harus saya lakukan ketika seorang anak memberi tahu saya bahwa dia di-bully atau dilecehkan? Tanggapi kejadian itu dengan serius. Hargai dan berterima kasihlah pada siswa tersebut karena telah melapor kepada Anda.</item>
+        <item>Dewasa ini, media sosial hangat dengan pemberitaan kasus bullying atau perundungan yang terjadi di salah satu sekolah swasta di Tangerang. Kasus ini menjadi realitas menyedihkan bahwa di era modern dimana seluruh kampanye anti perundungan bisa kita ditemukan dimana-mana.</item>
+        <item>Perundungan atau bullying belakangan ini sudah menjadi hal yang cukup biasa terjadi di masyarakat dan telah menjadi situasi darurat kesehatan masyarakat. Dampak bullying sangat memengaruhi kondisi para korban.</item>
+        <item>Apa yang ingin kamu ketahui dari cyberbullying?” Kami mengajukan pertanyaan ini kepada orang muda dan menerima ribuan tanggapan dari mereka di seluruh dunia!</item>
+        <item>Audrey, seorang siswi SMP di Pontianak, pernah menjadi korban bullying brutal oleh 12 orang siswi lainnya pada tahun 2019. Video penganiayaan yang beredar luas menunjukkan Audrey ditelanjangi dan dipaksa meminum air toilet.</item>
+        <item>Bullying atau perundungan saat ini banyak terjadi pada anak remaja. Perundungan dapat membuat seseorang menjadi depresi bahkan hilang rasa percaya diri. Bullying adalah tindakan penggunaan kekuasaan untuk menyakiti seseorang.</item>
+        <item>Perundungan (bullying) dapat terjadi di mana saja, termasuk di sekolah, tempat kerja, dan lingkungan sekitar.</item>
+        <item>Minggu terakhir ini, wall social media saya sering kali dipenuhi oleh pemberitaan mengenai dua kasus bullying. Yang satu dilakukan oleh mahasiswa, satu lagi anak-anak remaja yang masih duduk di bangku SMP.</item>
+        <item>Kasus membully teman yang kerap terjadi dalam dunia pendidikan di Indonesia kian memprihatinkan. Bullying adalah tindakan atau perilaku yang menyakiti teman baik dalam bentuk fisik atau verbal.</item>
+        <item>Memukul, mencekik, menyikut, meninju, menendang, menggigit, memiting, mencakar, serta meludahi anak yang ditindas hingga ke posisi yang menyakitkan, serta merusak dan menghancurkan pakaian serta barang-barang milik anak yang tertindas.</item>
+        <item>Perundungan atau bullying verbal dan non verbal adalah salah satu jenis bullying yang kejadian atau kasusnya sudah pasti pernah kamu baca dan dengar. Pada kesempatan ini, Mamikos punya bahasan lengkap mengenai apa saja contoh bullying verbal dan non verbal beserta penyebab dan cara mengatasinya.</item>
+        <item>Tak dapat dipungkiri bahwa kata ini begitu populer dalam masyarakat manapun, termasuk Indonesia. Banyak negara yang saat ini mempunyai kesadaran hukum yang kuat, memiliki hukum anti bullying.</item>
+        <item>Sebenarnya sama seperti korban, pelaku bullying pun memerlukan penanganan khusus agar perilakunya tak bertambah buruk hingga menghambat kemajuannya di masa depan. Baik keluarga maupun orangtua khususnya, perlu mengenali karakteristik anak-anak yang menjadi pelaku bullying.</item>
     </string-array>
 
     <string-array name="tempdata_article_url">
@@ -82,11 +127,18 @@
         <item>https://www.ums.ac.id/berita/perspektif/jeratan-gelap-bullying-di-dunia-pendidikan-indonesia</item>
         <item>https://radarsemarang.jawapos.com/opini/721390319/berani-melapor-kasus-bullying</item>
         <item>https://infojateng.id/read/13752/simpan-bukti-digital-korban-bullying-harus-berani-lapor/</item>
+        <item>https://www.unicef.org/indonesia/id/child-protection/tips-untuk-guru-mengatasi-bullying</item>
+        <item>https://www.ganto.co/artikel/1026/menantang-tradisi-kejam-melawan-budaya-bullying-di-indonesia.html</item>
+        <item>https://primayahospital.com/kejiwaan/dampak-bullying/</item>
+        <item>https://www.unicef.org/indonesia/id/child-protection/apa-itu-cyberbullying</item>
+        <item>https://cakrawalanews.co/news/74058/kisah-inspiratif-bangkit-dari-bullying-menuju-kesuksesan/</item>
+        <item>https://www.rri.co.id/kesehatan/740349/bangkit-dari-orang-yang-suka-bullying</item>
+        <item>https://lingkarjateng.id/2023/10/ayo-bangkit-10-cara-hilangkan-trauma-bullying-ini-perlu-dicoba/</item>
+        <item>https://mommiesdaily.com/2017/07/21/keluarkan-pembully-dari-sekolah-tepatkah</item>
+        <item>https://bincangmuslimah.com/kajian/kata-nabi-tentang-seseorang-yang-senang-membully-temannya-30532/</item>
+        <item>https://www.rsmardirahayu.com/bullying-dari-perspektif-psikologi/</item>
+        <item>https://mamikos.com/info/contoh-bullying-verbal-dan-non-verbal-pljr/</item>
+        <item>https://andreasnataatmadja.com/2018/07/25/bullying-dalam-pandangan-kristen/</item>
+        <item>https://www.indonesiabaik.id/infografis/mulai-dari-rumah-ajarkan-anak-tidak-jadi-pembully</item>
     </string-array>
-
-    <!--article-->
-    <string name="article_summary">Lorem Ipsum Dolor Sir Amet</string>
-    <string name="article_title_data">Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel Judul Artikel</string>
-    <string name="article_description_data">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-
 </resources>

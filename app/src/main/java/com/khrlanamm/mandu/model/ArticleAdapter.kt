@@ -2,22 +2,22 @@ package com.khrlanamm.mandu.model
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.khrlanamm.mandu.R
+import com.khrlanamm.mandu.ui.article.ArticleDetailActivity
 
 class ArticleAdapter(private val context: Context, private var articles: List<Article>) :
     RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() {
 
-    // Fungsi untuk memperbarui data di adapter
     fun updateData(newArticles: List<Article>) {
         articles = newArticles
-        notifyDataSetChanged() // Memberi tahu RecyclerView untuk me-render ulang
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
@@ -38,13 +38,17 @@ class ArticleAdapter(private val context: Context, private var articles: List<Ar
         private val image: ImageView = view.findViewById(R.id.articleImage)
 
         init {
-            // Menangani klik pada setiap item
             itemView.setOnClickListener {
-                // Pastikan posisi adapter valid
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     val article = articles[adapterPosition]
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
-                    context.startActivity(intent)
+
+                    if (article.url.startsWith("http://") || article.url.startsWith("https://")) {
+                        val intent = Intent(context, ArticleDetailActivity::class.java).apply {
+                            putExtra(ArticleDetailActivity.EXTRA_URL, article.url)
+                            putExtra(ArticleDetailActivity.EXTRA_TITLE, article.title)
+                        }
+                        context.startActivity(intent)
+                    }
                 }
             }
         }
@@ -52,7 +56,12 @@ class ArticleAdapter(private val context: Context, private var articles: List<Ar
         fun bind(article: Article) {
             title.text = article.title
             description.text = article.description
-            image.setImageResource(article.image)
+
+            Glide.with(context)
+                .load(article.image)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(image)
         }
     }
 }

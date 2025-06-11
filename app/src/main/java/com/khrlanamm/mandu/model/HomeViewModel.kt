@@ -10,37 +10,50 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application.applicationContext
 
-    // Mengambil data dummy dari resources
-    private val articleTitles: Array<String> = context.resources.getStringArray(R.array.tempdata_article_title)
-    private val articleDescriptions: Array<String> = context.resources.getStringArray(R.array.tempdata_article_description)
-    private val articleUrls: Array<String> = context.resources.getStringArray(R.array.tempdata_article_url)
-    private val articleImages: IntArray = context.resources.obtainTypedArray(R.array.tempdata_article_image).let { typedArray ->
-        val array = IntArray(typedArray.length()) { index -> typedArray.getResourceId(index, -1) }
-        typedArray.recycle()
-        array
-    }
+    private var originalArticles: List<Article> = emptyList()
 
-    // LiveData yang akan diamati oleh Activity
     private val _articles = MutableLiveData<List<Article>>()
     val articles: LiveData<List<Article>> get() = _articles
 
+    private val _noResultsFound = MutableLiveData<Boolean>()
+    val noResultsFound: LiveData<Boolean> get() = _noResultsFound
+
     init {
-        // Memuat data saat ViewModel dibuat
         loadArticles()
     }
 
     private fun loadArticles() {
         val data = mutableListOf<Article>()
+        val articleTitles = context.resources.getStringArray(R.array.tempdata_article_title)
+        val articleDescriptions = context.resources.getStringArray(R.array.tempdata_article_description)
+        val articleUrls = context.resources.getStringArray(R.array.tempdata_article_url)
+        val articleImages = context.resources.getStringArray(R.array.tempdata_article_image)
+
         for (i in articleTitles.indices) {
             data.add(
                 Article(
                     title = articleTitles[i],
                     description = articleDescriptions[i],
-                    image = articleImages.getOrNull(i) ?: 0, // Fallback jika ada masalah
+                    image = articleImages.getOrNull(i) ?: "",
                     url = articleUrls.getOrNull(i) ?: ""
                 )
             )
         }
-        _articles.value = data
+        originalArticles = data
+        _articles.value = originalArticles
+    }
+
+    fun searchArticles(query: String) {
+        val filteredList = if (query.isEmpty()) {
+            originalArticles
+        } else {
+            originalArticles.filter { article ->
+                article.title.contains(query, ignoreCase = true)
+            }
+        }
+
+        _articles.value = filteredList
+
+        _noResultsFound.value = filteredList.isEmpty() && query.isNotEmpty()
     }
 }

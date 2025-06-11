@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -31,15 +32,20 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Setup Toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        // Setup ViewModel, RecyclerView, dan Observers
         setupViewModel()
         setupRecyclerView()
-        observeArticles()
+        observeViewModel() // Mengganti nama fungsi observer
 
+        // Setup listener untuk tombol, card, dan search
         setupClickListeners()
+        setupSearch() // Menambahkan setup untuk search
 
+        // Setup logika tombol kembali
         setupOnBackPressedCallback()
     }
 
@@ -52,27 +58,64 @@ class MainActivity : AppCompatActivity() {
         binding.ArticlesRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = articleAdapter
-            isNestedScrollingEnabled = false
+            // isNestedScrollingEnabled sudah diatur di XML, jadi tidak perlu di sini
         }
     }
 
-    private fun observeArticles() {
+    /**
+     * Mengamati perubahan data dari ViewModel.
+     * 1. Mengamati daftar artikel untuk diperbarui di RecyclerView.
+     * 2. Mengamati status 'tidak ditemukan' untuk menampilkan Toast.
+     */
+    private fun observeViewModel() {
         homeViewModel.articles.observe(this) { articles ->
             articleAdapter.updateData(articles)
+        }
+
+        homeViewModel.noResultsFound.observe(this) { noResults ->
+            if (noResults) {
+                Toast.makeText(this, "Artikel yang anda cari belum tersedia", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun setupClickListeners() {
+        // Mendapatkan extras dari intent yang memulai MainActivity
+        val extras = intent.extras ?: Bundle()
+
         binding.fab.setOnClickListener {
-            val intent = Intent(this, ReportActivity::class.java)
+            val intent = Intent(this, ReportActivity::class.java).apply {
+                putExtras(extras) // Meneruskan data pengguna
+            }
             startActivity(intent)
         }
 
         binding.cardReportBullying.setOnClickListener {
-            val intent = Intent(this, ReportActivity::class.java)
+            val intent = Intent(this, ReportActivity::class.java).apply {
+                putExtras(extras) // Meneruskan data pengguna
+            }
             startActivity(intent)
         }
     }
+
+    /**
+     * Menyiapkan listener untuk SearchView untuk memfilter artikel secara real-time.
+     */
+    private fun setupSearch() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Tidak perlu aksi khusus saat submit, karena pencarian sudah live
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Panggil fungsi search di ViewModel setiap kali teks berubah
+                homeViewModel.searchArticles(newText.orEmpty())
+                return true
+            }
+        })
+    }
+
 
     private fun setupOnBackPressedCallback() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -93,13 +136,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Mendapatkan extras dari intent yang memulai MainActivity
+        val extras = intent.extras ?: Bundle()
+
         return when (item.itemId) {
             R.id.action_account -> {
-                startActivity(Intent(this, ProfileActivity::class.java))
+                val intent = Intent(this, ProfileActivity::class.java).apply {
+                    putExtras(extras) // Meneruskan data pengguna
+                }
+                startActivity(intent)
                 true
             }
             R.id.action_history -> {
-                startActivity(Intent(this, HistoryActivity::class.java))
+                val intent = Intent(this, HistoryActivity::class.java).apply {
+                    putExtras(extras)
+                }
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -93,7 +93,7 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun signIn() {
-        updateUI(true)
+        updateUI(true) // Memulai loading
         val signInIntent = googleSignInClient.signInIntent
         googleSignInLauncher.launch(signInIntent)
     }
@@ -109,12 +109,12 @@ class AuthActivity : AppCompatActivity() {
             } catch (e: ApiException) {
                 Log.w("AuthActivity", "Google sign in failed", e)
                 Toast.makeText(this, "Gagal masuk dengan Google: ${e.message}", Toast.LENGTH_SHORT).show()
-                updateUI(false)
+                updateUI(false) // Menghentikan loading
             }
         } else {
             Log.w("AuthActivity", "Google sign in flow cancelled. Result code: ${result.resultCode}")
             Toast.makeText(this, "Login dengan Google dibatalkan", Toast.LENGTH_SHORT).show()
-            updateUI(false)
+            updateUI(false) // Menghentikan loading
         }
     }
 
@@ -128,7 +128,7 @@ class AuthActivity : AppCompatActivity() {
                 } else {
                     Log.w("AuthActivity", "signInWithCredential_firebase:failure", task.exception)
                     Toast.makeText(this, "Autentikasi Firebase gagal", Toast.LENGTH_SHORT).show()
-                    updateUI(false)
+                    updateUI(false) // Menghentikan loading
                 }
             }
     }
@@ -166,5 +166,6 @@ class AuthActivity : AppCompatActivity() {
 
     private fun updateUI(isLoading: Boolean) {
         binding.buttonGoogleSignIn.isEnabled = !isLoading
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
