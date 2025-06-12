@@ -1,12 +1,25 @@
 package com.khrlanamm.mandu.data
 
-object AdminUID {
-    private val adminIds = listOf(
-        "azh3zjxgW6VmhzWjafGoZMXjhxV2",
-        "yIY6GWhsnhcVAKNd5Dj7fIMayYz1"
-    )
+import android.util.Log
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
-    fun isAdmin(userId: String?): Boolean {
-        return userId != null && adminIds.contains(userId)
+object AdminUID {
+    private val db = Firebase.firestore
+
+    suspend fun isAdmin(userId: String?): Boolean {
+        if (userId.isNullOrEmpty()) {
+            return false
+        }
+
+        return try {
+            val adminDocRef = db.collection("admins").document(userId)
+            val document = adminDocRef.get().await()
+            document.exists()
+        } catch (e: Exception) {
+            Log.e("AdminUID", "Error checking admin status", e)
+            false
+        }
     }
 }
