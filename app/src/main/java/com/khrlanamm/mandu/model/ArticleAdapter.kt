@@ -1,5 +1,6 @@
 package com.khrlanamm.mandu.model
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.khrlanamm.mandu.ui.article.ArticleDetailActivity
 class ArticleAdapter(private val context: Context, private var articles: List<Article>) :
     RecyclerView.Adapter<ArticleAdapter.ArticleViewHolder>() {
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newArticles: List<Article>) {
         articles = newArticles
         notifyDataSetChanged()

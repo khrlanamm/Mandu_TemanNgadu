@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -32,20 +33,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setup Toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Setup ViewModel, RecyclerView, dan Observers
         setupViewModel()
         setupRecyclerView()
-        observeViewModel() // Mengganti nama fungsi observer
+        observeViewModel()
+        setupSwipeToRefresh() // Panggil fungsi setup untuk swipe-refresh
 
-        // Setup listener untuk tombol, card, dan search
         setupClickListeners()
-        setupSearch() // Menambahkan setup untuk search
-
-        // Setup logika tombol kembali
+        setupSearch()
         setupOnBackPressedCallback()
     }
 
@@ -58,15 +55,9 @@ class MainActivity : AppCompatActivity() {
         binding.ArticlesRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = articleAdapter
-            // isNestedScrollingEnabled sudah diatur di XML, jadi tidak perlu di sini
         }
     }
 
-    /**
-     * Mengamati perubahan data dari ViewModel.
-     * 1. Mengamati daftar artikel untuk diperbarui di RecyclerView.
-     * 2. Mengamati status 'tidak ditemukan' untuk menampilkan Toast.
-     */
     private fun observeViewModel() {
         homeViewModel.articles.observe(this) { articles ->
             articleAdapter.updateData(articles)
@@ -77,45 +68,68 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Artikel yang anda cari belum tersedia", Toast.LENGTH_SHORT).show()
             }
         }
+
+        homeViewModel.isLoading.observe(this) { isLoading ->
+            // Mengontrol indikator loading dari SwipeRefreshLayout
+            binding.swipeRefreshLayout.isRefreshing = isLoading
+
+            // Tampilkan ProgressBar di tengah hanya saat loading awal (ketika list masih kosong)
+            if (isLoading && articleAdapter.itemCount == 0) {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.ArticlesRecyclerView.visibility = View.GONE
+            } else {
+                binding.progressBar.visibility = View.GONE
+                binding.ArticlesRecyclerView.visibility = View.VISIBLE
+            }
+        }
+
+        homeViewModel.errorMessage.observe(this) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    /**
+     * Mengatur listener untuk SwipeRefreshLayout.
+     */
+    private fun setupSwipeToRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            // Saat di-swipe, panggil fungsi untuk memuat ulang data dari Firestore.
+            homeViewModel.loadArticlesFromFirestore()
+        }
     }
 
     private fun setupClickListeners() {
-        // Mendapatkan extras dari intent yang memulai MainActivity
         val extras = intent.extras ?: Bundle()
 
         binding.fab.setOnClickListener {
             val intent = Intent(this, ReportActivity::class.java).apply {
-                putExtras(extras) // Meneruskan data pengguna
+                putExtras(extras)
             }
             startActivity(intent)
         }
 
         binding.cardReportBullying.setOnClickListener {
             val intent = Intent(this, ReportActivity::class.java).apply {
-                putExtras(extras) // Meneruskan data pengguna
+                putExtras(extras)
             }
             startActivity(intent)
         }
     }
 
-    /**
-     * Menyiapkan listener untuk SearchView untuk memfilter artikel secara real-time.
-     */
     private fun setupSearch() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // Tidak perlu aksi khusus saat submit, karena pencarian sudah live
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Panggil fungsi search di ViewModel setiap kali teks berubah
                 homeViewModel.searchArticles(newText.orEmpty())
                 return true
             }
         })
     }
-
 
     private fun setupOnBackPressedCallback() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -136,13 +150,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Mendapatkan extras dari intent yang memulai MainActivity
         val extras = intent.extras ?: Bundle()
 
         return when (item.itemId) {
             R.id.action_account -> {
                 val intent = Intent(this, ProfileActivity::class.java).apply {
-                    putExtras(extras) // Meneruskan data pengguna
+                    putExtras(extras)
                 }
                 startActivity(intent)
                 true
