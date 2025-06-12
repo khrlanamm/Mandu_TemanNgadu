@@ -238,7 +238,6 @@ class ReportActivity : AppCompatActivity() {
 
         val selectedRole = if (binding.radioKorban.isChecked) "Korban" else "Saksi"
 
-        // Buat objek laporan dengan data yang relevan
         val report = hashMapOf(
             "id" to UUID.randomUUID().toString(),
             "userId" to userId,

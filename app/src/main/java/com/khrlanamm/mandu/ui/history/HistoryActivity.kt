@@ -35,9 +35,16 @@ class HistoryActivity : AppCompatActivity() {
         setupToolbar()
         setupRecyclerView()
         setupFilterDropdown()
+        setupSwipeToRefresh()
         observeViewModel()
+
+        // Pemanggilan data dipindahkan ke onResume()
     }
 
+    /**
+     * onResume akan dipanggil setiap kali activity ini ditampilkan.
+     * Ini mencakup saat pertama kali dibuka dan saat kembali dari activity lain.
+     */
     override fun onResume() {
         super.onResume()
         viewModel.loadReports()
@@ -78,9 +85,21 @@ class HistoryActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupSwipeToRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadReports()
+        }
+    }
+
     private fun observeViewModel() {
         viewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.swipeRefreshLayout.isRefreshing = isLoading
+
+            if (isLoading && historyAdapter.currentList.isEmpty()) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
         }
 
         viewModel.toastMessage.observe(this) { message ->
@@ -95,13 +114,13 @@ class HistoryActivity : AppCompatActivity() {
         }
 
         viewModel.reportedStats.observe(this) { stats ->
-            val formattedPercentage = String.format(Locale.US, "%.2f", stats.percentage)
+            val formattedPercentage = String.format(Locale.US, "%.1f", stats.percentage)
             binding.tvStatsReported.text = "Terlapor : ${stats.count} (${formattedPercentage}%)"
             binding.progressReported.progress = stats.percentage.toInt()
         }
 
         viewModel.handledStats.observe(this) { stats ->
-            val formattedPercentage = String.format(Locale.US, "%.2f", stats.percentage)
+            val formattedPercentage = String.format(Locale.US, "%.1f", stats.percentage)
             binding.tvStatsHandled.text = "Ditangani : ${stats.count} (${formattedPercentage}%)"
             binding.progressHandled.progress = stats.percentage.toInt()
         }

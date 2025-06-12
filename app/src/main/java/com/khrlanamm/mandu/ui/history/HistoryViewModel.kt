@@ -8,7 +8,7 @@ import com.khrlanamm.mandu.ui.history.data.HistoryRepository
 import com.khrlanamm.mandu.ui.history.data.Report
 import kotlinx.coroutines.launch
 
-// Mengubah tipe data 'percentage' menjadi Float untuk presisi desimal
+// data class Stats tidak perlu diubah
 data class Stats(val count: Int = 0, val percentage: Float = 0f)
 
 class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() {
@@ -19,6 +19,7 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
     private val _toastMessage = MutableLiveData<String?>()
     val toastMessage: LiveData<String?> = _toastMessage
 
+    // _allReports tetap menyimpan data mentah dari Firestore
     private val _allReports = MutableLiveData<List<Report>>()
 
     private val _filteredReports = MutableLiveData<List<Report>>()
@@ -30,62 +31,85 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
     private val _handledStats = MutableLiveData<Stats>()
     val handledStats: LiveData<Stats> = _handledStats
 
-    // Fungsi untuk memuat data awal
+    // Variabel untuk menyimpan status filter saat ini
+    private var currentFilter: String = "Semua Laporan"
+
+    /**
+     * Memuat data dari repository.
+     * Fungsi ini sekarang akan langsung menerapkan filter pada data yang baru diterima.
+     */
     fun loadReports() {
         _isLoading.value = true
         viewModelScope.launch {
-            val result = repository.getHistoryReports()
-            result.onSuccess { reports ->
-                if (reports.isEmpty()) {
-                    _toastMessage.value = "Belum ada Laporan"
+            try {
+                val result = repository.getHistoryReports()
+                result.onSuccess { freshReports ->
+                    if (freshReports.isEmpty()) {
+                        _toastMessage.postValue("Belum ada Laporan")
+                    }
+                    _allReports.postValue(freshReports) // Update daftar lengkap
+                    calculateStats(freshReports) // Hitung statistik dari data baru
+
+                    // LANGSUNG TERAPKAN FILTER PADA DATA BARU, JANGAN MENUNGGU
+                    val filteredList = applyFilter(freshReports, currentFilter)
+                    _filteredReports.postValue(filteredList)
+
+                }.onFailure {
+                    _toastMessage.postValue("Gagal memuat data: ${it.message}")
                 }
-                _allReports.value = reports
-                calculateStats(reports)
-                filterReports("Semua Laporan") // Tampilkan semua laporan secara default
-            }.onFailure {
-                _toastMessage.value = "Gagal memuat data: ${it.message}"
+            } finally {
+                // Pastikan loading selalu dihentikan
+                _isLoading.postValue(false)
             }
-            _isLoading.value = false
         }
     }
 
-    // Fungsi untuk memfilter daftar laporan
+    /**
+     * Fungsi yang dipanggil saat pengguna mengubah pilihan filter di dropdown.
+     */
     fun filterReports(statusFilter: String) {
-        val all = _allReports.value ?: emptyList()
-        val filteredList = when (statusFilter) {
-            "Terlapor" -> all.filter { it.status.equals("terlapor", ignoreCase = true) }
-            "Ditangani" -> all.filter { it.status.equals("ditangani", ignoreCase = true) }
-            else -> all // "Semua Laporan"
-        }
+        // Simpan status filter yang baru dipilih
+        this.currentFilter = statusFilter
 
+        val allCurrentReports = _allReports.value ?: emptyList()
+        val filteredList = applyFilter(allCurrentReports, statusFilter)
         _filteredReports.value = filteredList
 
-        if (all.isNotEmpty() && filteredList.isEmpty()) {
+        if (allCurrentReports.isNotEmpty() && filteredList.isEmpty()) {
             _toastMessage.value = "Tidak ada Riwayat Laporan dengan status ${statusFilter.uppercase()}"
         }
     }
 
-    // Fungsi untuk menghitung statistik dengan presisi float
+    /**
+     * Helper function untuk memusatkan logika filter.
+     * @param reports Daftar laporan yang akan difilter.
+     * @param filter Kriteria filter ("Semua Laporan", "Terlapor", "Ditangani").
+     * @return Daftar laporan yang sudah difilter.
+     */
+    private fun applyFilter(reports: List<Report>, filter: String): List<Report> {
+        return when (filter) {
+            "Terlapor" -> reports.filter { it.status.equals("terlapor", ignoreCase = true) }
+            "Ditangani" -> reports.filter { it.status.equals("ditangani", ignoreCase = true) }
+            else -> reports // "Semua Laporan"
+        }
+    }
+
+    // Fungsi calculateStats dan onToastShown tidak perlu diubah
     private fun calculateStats(reports: List<Report>) {
         if (reports.isEmpty()) {
             _reportedStats.value = Stats(0, 0f)
             _handledStats.value = Stats(0, 0f)
             return
         }
-
         val total = reports.size
         val reportedCount = reports.count { it.status.equals("terlapor", ignoreCase = true) }
         val handledCount = reports.count { it.status.equals("ditangani", ignoreCase = true) }
-
-        // Kalkulasi diubah menjadi float untuk mendapatkan nilai desimal
         val reportedPercentage = if (total > 0) (reportedCount * 100f / total) else 0f
         val handledPercentage = if (total > 0) (handledCount * 100f / total) else 0f
-
         _reportedStats.value = Stats(reportedCount, reportedPercentage)
         _handledStats.value = Stats(handledCount, handledPercentage)
     }
 
-    // Fungsi untuk membersihkan pesan toast setelah ditampilkan
     fun onToastShown() {
         _toastMessage.value = null
     }

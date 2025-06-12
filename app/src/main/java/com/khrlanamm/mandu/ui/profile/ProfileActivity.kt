@@ -2,18 +2,22 @@ package com.khrlanamm.mandu.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.khrlanamm.mandu.R
+import com.khrlanamm.mandu.data.AdminUID
 import com.khrlanamm.mandu.databinding.ActivityProfileBinding
 import com.khrlanamm.mandu.ui.auth.AuthActivity
+import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -33,6 +37,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         displayUserData()
+        setupUserRole() // Panggil fungsi untuk set role
 
         binding.buttonEditProfile.setOnClickListener {
             Toast.makeText(
@@ -59,11 +64,29 @@ class ProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(photoUrl)
-            .placeholder(R.drawable.ic_launcher_background) // Ganti dengan placeholder Anda
-            .error(R.drawable.ic_launcher_background) // Ganti dengan gambar error Anda
+            .placeholder(R.drawable.ic_launcher_background)
+            .error(R.drawable.ic_launcher_background)
             .circleCrop()
             .into(binding.profileImage)
     }
+
+    private fun setupUserRole() {
+        val uid = intent.getStringExtra("USER_UID")
+        lifecycleScope.launch {
+            val isAdmin = AdminUID.isAdmin(uid)
+            binding.textUserRole.apply {
+                if (isAdmin) {
+                    text = getString(R.string.admin_role)
+                    setBackgroundResource(R.drawable.bg_peran_saksi)
+                } else {
+                    text = getString(R.string.user_role)
+                    setBackgroundResource(R.drawable.bg_status_terlapor)
+                }
+                visibility = View.VISIBLE
+            }
+        }
+    }
+
 
     private fun showLogoutConfirmationDialog() {
         AlertDialog.Builder(this).apply {
@@ -79,17 +102,13 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun logoutUser() {
-        // Logout dari Firebase
         Firebase.auth.signOut()
-
-        // Logout dari Google
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut().addOnCompleteListener {
-            // Arahkan ke AuthActivity setelah logout
             val intent = Intent(this, AuthActivity::class.java)
             intent.putExtra(AuthActivity.EXTRA_FROM_LOGOUT, true)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

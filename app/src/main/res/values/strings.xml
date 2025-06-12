@@ -25,6 +25,8 @@
     <string name="edit_profile">Ubah Profil</string>
     <string name="logout">Keluar</string>
     <string name="action_account">Akun</string>
+    <string name="user_role">PENGGUNA</string>
+    <string name="admin_role">ADMIN</string>
 
     <!--Report-->
     <string name="action_report">LaBu</string>
