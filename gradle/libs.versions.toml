@@ -30,6 +30,7 @@ recyclerview = "1.4.0"
 roomRuntime = "2.7.1"
 activity = "1.10.1"
 swiperefreshlayout = "1.1.0"
+firebaseMessaging = "24.1.1"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
@@ -67,6 +68,7 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage", v
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

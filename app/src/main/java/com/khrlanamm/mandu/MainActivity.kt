@@ -1,6 +1,9 @@
 package com.khrlanamm.mandu
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,13 +11,18 @@ import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.khrlanamm.mandu.databinding.ActivityMainBinding
 import com.khrlanamm.mandu.model.ArticleAdapter
 import com.khrlanamm.mandu.model.HomeViewModel
+import com.khrlanamm.mandu.service.MyFirebaseMessagingService
 import com.khrlanamm.mandu.ui.history.HistoryActivity
 import com.khrlanamm.mandu.ui.profile.ProfileActivity
 import com.khrlanamm.mandu.ui.report.ReportActivity
@@ -26,6 +34,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var articleAdapter: ArticleAdapter
     private var backPressedTime: Long = 0
 
+    // Launcher untuk meminta izin notifikasi
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(this, "Izin notifikasi diberikan.", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Izin notifikasi ditolak.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -33,17 +52,39 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        askNotificationPermission()
+
+        checkUserAndSaveToken()
+
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         setupViewModel()
         setupRecyclerView()
         observeViewModel()
-        setupSwipeToRefresh() // Panggil fungsi setup untuk swipe-refresh
+        setupSwipeToRefresh()
 
         setupClickListeners()
         setupSearch()
         setupOnBackPressedCallback()
+    }
+
+    private fun askNotificationPermission() {
+        // Hanya untuk Android 13 (TIRAMISU) ke atas
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                // Jika izin belum diberikan, minta izin.
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    private fun checkUserAndSaveToken() {
+        if (Firebase.auth.currentUser != null) {
+            MyFirebaseMessagingService.saveTokenIfAdmin()
+        }
     }
 
     private fun setupViewModel() {
@@ -70,10 +111,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         homeViewModel.isLoading.observe(this) { isLoading ->
-            // Mengontrol indikator loading dari SwipeRefreshLayout
             binding.swipeRefreshLayout.isRefreshing = isLoading
-
-            // Tampilkan ProgressBar di tengah hanya saat loading awal (ketika list masih kosong)
             if (isLoading && articleAdapter.itemCount == 0) {
                 binding.progressBar.visibility = View.VISIBLE
                 binding.ArticlesRecyclerView.visibility = View.GONE
@@ -90,12 +128,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Mengatur listener untuk SwipeRefreshLayout.
-     */
     private fun setupSwipeToRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            // Saat di-swipe, panggil fungsi untuk memuat ulang data dari Firestore.
             homeViewModel.loadArticlesFromFirestore()
         }
     }
