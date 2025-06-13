@@ -160,16 +160,20 @@ class ReportActivity : AppCompatActivity() {
 
         val selectedRole = if (binding.radioKorban.isChecked) "Korban" else "Saksi"
         val description = binding.etDeskripsi.text.toString()
+        val location = binding.etLokasi.text.toString()
+        val bullyingDate = binding.etTanggal.text.toString()
+        val frequency = binding.actvFrekuensi.text.toString()
+        val whatsappNumber = binding.etWhatsapp.text.toString()
 
         val report = hashMapOf(
             "id" to UUID.randomUUID().toString(),
             "userId" to userId,
             "peran" to selectedRole,
-            "tanggalBullying" to binding.etTanggal.text.toString(),
-            "lokasi" to binding.etLokasi.text.toString(),
-            "frekuensi" to binding.actvFrekuensi.text.toString(),
+            "tanggalBullying" to bullyingDate,
+            "lokasi" to location,
+            "frekuensi" to frequency,
             "deskripsi" to description,
-            "nomorWhatsapp" to binding.etWhatsapp.text.toString(),
+            "nomorWhatsapp" to whatsappNumber,
             "urlBukti" to imageUrl,
             "timestamp" to Date(),
             "status" to "terlapor"
@@ -178,11 +182,14 @@ class ReportActivity : AppCompatActivity() {
         firestore.collection("reports")
             .add(report)
             .addOnSuccessListener {
-                Toast.makeText(this, "Laporan berhasil dikirim! Mengirim notifikasi...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Laporan berhasil dikirim!", Toast.LENGTH_SHORT).show()
 
                 val data = hashMapOf(
                     "peran" to selectedRole,
-                    "deskripsi" to description
+                    "deskripsi" to description,
+                    "lokasi" to location,
+                    "tanggalBullying" to bullyingDate,
+                    "urlBukti" to imageUrl
                 )
 
                 functions
