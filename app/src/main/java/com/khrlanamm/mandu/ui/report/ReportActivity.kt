@@ -15,9 +15,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
@@ -26,6 +28,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityReportBinding
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -38,16 +41,25 @@ class ReportActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
-    private lateinit var functions: FirebaseFunctions // <-- Tambahkan instance Functions
+    private lateinit var functions: FirebaseFunctions
 
     private var imageUri: Uri? = null
 
-    private val requestPermissionLauncher: ActivityResultLauncher<String> =
+    private val requestGalleryPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 openGallery()
             } else {
                 Toast.makeText(this, "Izin galeri ditolak", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private val requestCameraPermissionLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                openCamera()
+            } else {
+                Toast.makeText(this, "Izin kamera ditolak", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -64,6 +76,14 @@ class ReportActivity : AppCompatActivity() {
             }
         }
 
+    private val takePictureLauncher: ActivityResultLauncher<Uri> =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                binding.ivPreviewBukti.setImageURI(imageUri)
+                binding.ivPreviewBukti.visibility = View.VISIBLE
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -71,12 +91,9 @@ class ReportActivity : AppCompatActivity() {
         binding = ActivityReportBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inisialisasi Firebase
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
-        // --- PERBAIKAN DI SINI ---
-        // Mengarahkan ke region tempat fungsi di-deploy (us-central1 adalah default)
         functions = Firebase.functions("us-central1")
 
         setupToolbar()
@@ -85,10 +102,54 @@ class ReportActivity : AppCompatActivity() {
         setupActionListeners()
     }
 
-    // Fungsi lainnya (setupToolbar, checkStoragePermission, dll) tetap sama...
-    // ...
+    private fun setupActionListeners() {
+        binding.buttonUnggahBukti.setOnClickListener {
+            showImageSourceDialog()
+        }
 
-    // FUNGSI INI YANG DIUBAH SECARA SIGNIFIKAN
+        binding.buttonKirimLaporan.setOnClickListener {
+            if (auth.currentUser == null) {
+                Toast.makeText(this, "Anda harus masuk untuk dapat mengirim laporan.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (validateInput()) {
+                uploadImageAndSaveReport()
+            }
+        }
+    }
+
+    private fun showImageSourceDialog() {
+        val options = arrayOf("Buka Kamera", "Pilih dari Galeri")
+        AlertDialog.Builder(this)
+            .setTitle("Pilih Sumber Gambar")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                    1 -> {
+                        checkStoragePermissionAndOpenGallery()
+                    }
+                }
+            }
+            .show()
+    }
+
+    private fun openCamera() {
+        val newImageUri = createImageUri()
+        imageUri = newImageUri
+        takePictureLauncher.launch(newImageUri)
+    }
+
+    private fun createImageUri(): Uri {
+        val imageFile = File(cacheDir, "temp_image_${UUID.randomUUID()}.jpg")
+        return FileProvider.getUriForFile(
+            this,
+            "${applicationContext.packageName}.fileprovider",
+            imageFile
+        )
+    }
+
     private fun saveReportToFirestore(imageUrl: String?) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -117,30 +178,23 @@ class ReportActivity : AppCompatActivity() {
         firestore.collection("reports")
             .add(report)
             .addOnSuccessListener {
-                // LAPORAN BERHASIL DISIMPAN!
-                // Sekarang kita panggil Cloud Function untuk mengirim notifikasi.
                 Toast.makeText(this, "Laporan berhasil dikirim! Mengirim notifikasi...", Toast.LENGTH_SHORT).show()
 
-                // Siapkan data untuk dikirim ke fungsi
                 val data = hashMapOf(
                     "peran" to selectedRole,
                     "deskripsi" to description
                 )
 
-                // Panggil fungsi 'sendReportNotification'
                 functions
                     .getHttpsCallable("sendReportNotification")
                     .call(data)
                     .addOnCompleteListener { task ->
-                        // Bagian ini adalah hasil dari pemanggilan Cloud Function
                         if (!task.isSuccessful) {
                             val e = task.exception
                             Log.w("ReportActivity", "Pemanggilan fungsi gagal", e)
-                            // Tidak perlu menampilkan error ke pengguna, cukup log saja
                         } else {
                             Log.d("ReportActivity", "Notifikasi berhasil dipicu.")
                         }
-                        // Tutup activity setelah semuanya selesai.
                         showLoading(false)
                         finish()
                     }
@@ -176,25 +230,6 @@ class ReportActivity : AppCompatActivity() {
         }
     }
 
-    // --- Sisanya sama persis seperti kode Anda sebelumnya ---
-    // (setupActionListeners, validateInput, showLoading, dll.)
-
-    private fun setupActionListeners() {
-        binding.buttonUnggahBukti.setOnClickListener {
-            checkStoragePermissionAndOpenGallery()
-        }
-
-        binding.buttonKirimLaporan.setOnClickListener {
-            if (auth.currentUser == null) {
-                Toast.makeText(this, "Anda harus masuk untuk dapat mengirim laporan.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            if (validateInput()) {
-                uploadImageAndSaveReport()
-            }
-        }
-    }
-
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         pickImageLauncher.launch(intent)
@@ -224,10 +259,10 @@ class ReportActivity : AppCompatActivity() {
             }
             shouldShowRequestPermissionRationale(permissionToRequest) -> {
                 Toast.makeText(this, "Izin galeri dibutuhkan untuk memilih gambar bukti.", Toast.LENGTH_LONG).show()
-                requestPermissionLauncher.launch(permissionToRequest)
+                requestGalleryPermissionLauncher.launch(permissionToRequest)
             }
             else -> {
-                requestPermissionLauncher.launch(permissionToRequest)
+                requestGalleryPermissionLauncher.launch(permissionToRequest)
             }
         }
     }
