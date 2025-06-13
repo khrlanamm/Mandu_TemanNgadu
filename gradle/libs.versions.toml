@@ -45,6 +45,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRunt
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-functions-ktx = { module = "com.google.firebase:firebase-functions-ktx" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

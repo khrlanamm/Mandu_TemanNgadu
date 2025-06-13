@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
 
     implementation(libs.play.services.auth)
+    implementation(libs.firebase.functions.ktx)
 
     implementation(platform(libs.firebase.bom))
 
