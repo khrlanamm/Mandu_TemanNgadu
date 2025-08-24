@@ -14,8 +14,8 @@ android {
         applicationId = "com.khrlanamm.mandu"
         minSdk = 24
         targetSdk = 35
-        versionCode = 8
-        versionName = "MANDU-release-v.1.0.2"
+        versionCode = 9
+        versionName = "MANDU-release-v.1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

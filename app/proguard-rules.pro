@@ -1,21 +1,29 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Aturan umum yang penting
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepclassmembers,allowshrinking class * {
+    @com.google.firebase.firestore.PropertyName <methods>;
+}
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Aturan untuk Firebase
+-keep class com.google.firebase.auth.** { *; }
+-keep class com.google.firebase.firestore.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# --- ATURAN BARU YANG PENTING ---
+# Melindungi SEMUA kelas Model, ViewModel, Repository, dan Adapter di seluruh proyek
+# Tanda '**' berarti melindungi semua kelas di dalam paket dan sub-paketnya
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Melindungi paket model utama
+-keep class com.khrlanamm.mandu.model.** { *; }
+-keepnames class com.khrlanamm.mandu.model.** { *; }
+-keepclassmembers class com.khrlanamm.mandu.model.** { *; }
+
+# Melindungi semua kelas di dalam paket 'ui' (termasuk detail, history, dll)
+-keep class com.khrlanamm.mandu.ui.** { *; }
+-keepnames class com.khrlanamm.mandu.ui.** { *; }
+-keepclassmembers class com.khrlanamm.mandu.ui.** { *; }
+
+# Melindungi kelas Service (untuk notifikasi)
+-keep class com.khrlanamm.mandu.service.** { *; }
+-keepnames class com.khrlanamm.mandu.service.** { *; }
+-keepclassmembers class com.khrlanamm.mandu.service.** { *; }
