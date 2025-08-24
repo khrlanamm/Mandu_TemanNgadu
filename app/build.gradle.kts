@@ -14,15 +14,15 @@ android {
         applicationId = "com.khrlanamm.mandu"
         minSdk = 24
         targetSdk = 35
-        versionCode = 5
-        versionName = "MANDU-release-v.2.0"
+        versionCode = 8
+        versionName = "MANDU-release-v.1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.firebase.functions.ktx)
 
     implementation(platform(libs.firebase.bom))
+    implementation(libs.integrity)
 
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.fragment.ktx)
