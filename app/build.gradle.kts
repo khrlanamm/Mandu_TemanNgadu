@@ -14,8 +14,8 @@ android {
         applicationId = "com.khrlanamm.mandu"
         minSdk = 24
         targetSdk = 35
-        versionCode = 9
-        versionName = "MANDU-release-v.1.0.3"
+        versionCode = 10
+        versionName = "MANDU-release-v.1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,10 +23,12 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk.debugSymbolLevel = "FULL"
         }
     }
     compileOptions {
