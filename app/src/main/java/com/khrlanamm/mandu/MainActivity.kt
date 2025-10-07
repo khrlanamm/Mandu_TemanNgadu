@@ -15,6 +15,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
@@ -34,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var articleAdapter: ArticleAdapter
     private var backPressedTime: Long = 0
 
-    // Launcher untuk meminta izin notifikasi
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -49,13 +51,31 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        // --- PERUBAHAN 1: Aktifkan Edge-to-Edge ---
+        // Panggil ini SEBELUM setContentView
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // --- PERUBAHAN 2: Tambahkan Insets Listener ---
+        // Untuk memberikan padding agar konten tidak tertutup status bar atau navigation bar
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Terapkan padding atas pada AppBarLayout sesuai tinggi status bar
+            binding.appbar.setPadding(insets.left, insets.top, insets.right, 0)
+
+            // Terapkan padding bawah pada konten utama (RecyclerView/SwipeRefresh) sesuai tinggi navigation bar
+            // Ini mencegah FAB dan item terakhir di list tertutup oleh navigation bar
+            binding.swipeRefreshLayout.setPadding(0, 0, 0, insets.bottom)
+
+            WindowInsetsCompat.CONSUMED // Kembalikan insets yang sudah digunakan
+        }
+
+
         askNotificationPermission()
-
         checkUserAndSaveToken()
-
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
@@ -70,12 +90,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun askNotificationPermission() {
-        // Hanya untuk Android 13 (TIRAMISU) ke atas
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
                 PackageManager.PERMISSION_GRANTED
             ) {
-                // Jika izin belum diberikan, minta izin.
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }

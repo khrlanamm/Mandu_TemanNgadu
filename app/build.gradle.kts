@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.khrlanamm.mandu"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.khrlanamm.mandu"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 10
         versionName = "MANDU-release-v.1.1.0"
 
