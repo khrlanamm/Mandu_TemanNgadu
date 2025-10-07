@@ -20,6 +20,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
@@ -88,8 +91,22 @@ class ReportActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityReportBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            binding.appbar.setPadding(insets.left, insets.top, insets.right, 0)
+
+            val layoutParams = binding.buttonKirimLaporan.layoutParams as android.view.ViewGroup.MarginLayoutParams
+            layoutParams.bottomMargin = insets.bottom + resources.getDimensionPixelSize(R.dimen.fab_margin)
+            binding.buttonKirimLaporan.layoutParams = layoutParams
+
+            WindowInsetsCompat.CONSUMED
+        }
 
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()

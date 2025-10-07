@@ -11,6 +11,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
@@ -37,8 +40,25 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        // --- PERUBAHAN 1: Aktifkan Edge-to-Edge ---
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // --- PERUBAHAN 2: Tambahkan Insets Listener ---
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Terapkan padding atas pada AppBarLayout (asumsi parent dari toolbar)
+            (binding.toolbar.parent as? View)?.setPadding(insets.left, insets.top, insets.right, 0)
+
+            // Terapkan padding bawah pada container utama agar konten tidak terpotong
+            binding.root.setPadding(0, 0, 0, insets.bottom)
+
+            WindowInsetsCompat.CONSUMED
+        }
 
         setupToolbar()
 
@@ -50,7 +70,7 @@ class DetailActivity : AppCompatActivity() {
         } ?: return
 
         populateData()
-        setupUserAccess() // Panggilan ini tetap di sini
+        setupUserAccess()
         setupActionListeners()
         observeViewModel()
     }
@@ -83,22 +103,17 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    // --- PERUBAHAN UTAMA ADA DI FUNGSI INI ---
     private fun setupUserAccess() {
         val currentUser = auth.currentUser
-        // Gunakan lifecycleScope untuk menjalankan suspend function
         lifecycleScope.launch {
             val isAdmin = AdminUID.isAdmin(currentUser?.uid)
             if (isAdmin) {
-                // UI untuk Admin
                 binding.switchHandled.visibility = View.VISIBLE
                 binding.btnContactReporter.visibility = View.VISIBLE
                 binding.btnCancelReport.visibility = View.GONE
             } else {
-                // UI untuk pengguna biasa
                 binding.switchHandled.visibility = View.GONE
                 binding.btnContactReporter.visibility = View.GONE
-                // Cek jika user adalah pemilik laporan dan statusnya masih "terlapor"
                 if (currentUser?.uid == report.userId && report.status.equals("terlapor", true)) {
                     binding.btnCancelReport.visibility = View.VISIBLE
                 } else {

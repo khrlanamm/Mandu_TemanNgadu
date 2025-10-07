@@ -6,6 +6,9 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.khrlanamm.mandu.databinding.ActivityArticleDetailBinding
 
 class ArticleDetailActivity : AppCompatActivity() {
@@ -18,8 +21,21 @@ class ArticleDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // --- PERUBAHAN 1: Aktifkan Edge-to-Edge ---
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityArticleDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // --- PERUBAHAN 2: Tambahkan Insets Listener ---
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // Terapkan padding pada root view agar WebView tidak tertutup status/navigation bar
+            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+
 
         val url = intent.getStringExtra(EXTRA_URL)
 

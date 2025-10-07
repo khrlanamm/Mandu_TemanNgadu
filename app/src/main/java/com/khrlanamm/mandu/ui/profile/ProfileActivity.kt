@@ -7,6 +7,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -27,8 +30,19 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // Terapkan padding atas pada parent dari Toolbar
+            (binding.toolbar.parent as? View)?.setPadding(insets.left, insets.top, insets.right, 0)
+            // Terapkan padding bawah pada root view agar tombol logout tidak terpotong
+            binding.root.setPadding(0, 0, 0, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
@@ -37,7 +51,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         displayUserData()
-        setupUserRole() // Panggil fungsi untuk set role
+        setupUserRole()
 
         binding.buttonEditProfile.setOnClickListener {
             Toast.makeText(
@@ -56,11 +70,9 @@ class ProfileActivity : AppCompatActivity() {
         val name = intent.getStringExtra("USER_NAME")
         val email = intent.getStringExtra("USER_EMAIL")
         val photoUrl = intent.getStringExtra("USER_PHOTO_URL")
-        val uid = intent.getStringExtra("USER_UID")
 
         binding.textName.text = name
         binding.textEmail.text = email
-        binding.textUserId.text = uid
 
         Glide.with(this)
             .load(photoUrl)

@@ -8,6 +8,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityHistoryBinding
@@ -29,22 +32,25 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            (binding.toolbar.parent as? View)?.setPadding(insets.left, insets.top, insets.right, 0)
+            binding.swipeRefreshLayout.setPadding(0, 0, 0, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         setupToolbar()
         setupRecyclerView()
         setupFilterDropdown()
         setupSwipeToRefresh()
         observeViewModel()
-
-        // Pemanggilan data dipindahkan ke onResume()
     }
 
-    /**
-     * onResume akan dipanggil setiap kali activity ini ditampilkan.
-     * Ini mencakup saat pertama kali dibuka dan saat kembali dari activity lain.
-     */
     override fun onResume() {
         super.onResume()
         viewModel.loadReports()
