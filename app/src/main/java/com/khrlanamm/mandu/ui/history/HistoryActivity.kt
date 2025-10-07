@@ -8,16 +8,21 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityHistoryBinding
 import com.khrlanamm.mandu.ui.detail.DetailActivity
 import com.khrlanamm.mandu.ui.history.data.HistoryRepository
 import com.khrlanamm.mandu.ui.history.data.Report
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class HistoryActivity : AppCompatActivity() {
 
@@ -46,6 +51,7 @@ class HistoryActivity : AppCompatActivity() {
 
         setupToolbar()
         setupRecyclerView()
+        setupDatePicker() // Panggil setup date picker
         setupFilterDropdown()
         setupSwipeToRefresh()
         observeViewModel()
@@ -80,6 +86,48 @@ class HistoryActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun setupDatePicker() {
+        binding.tietDateRange.setOnClickListener {
+            // Mengambil nilai tanggal saat ini dari ViewModel untuk preselekasi
+            val currentStartDate = viewModel.startDate.value
+            val currentEndDate = viewModel.endDate.value
+            val selection = if (currentStartDate != null && currentEndDate != null) {
+                Pair(currentStartDate, currentEndDate)
+            } else {
+                // Default ke hari ini jika tidak ada yang dipilih
+                Pair(MaterialDatePicker.todayInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds())
+            }
+
+            val picker = MaterialDatePicker.Builder.dateRangePicker()
+                .setTitleText("Pilih Rentang Tanggal")
+                .setSelection(selection)
+                .build()
+
+            picker.show(supportFragmentManager, "DATE_RANGE_PICKER")
+
+            // Listener untuk tombol "OK"
+            picker.addOnPositiveButtonClickListener { dateSelection ->
+                val startDate = dateSelection.first
+                val endDate = dateSelection.second
+                viewModel.setDateRange(startDate, endDate) // Kirim ke ViewModel
+
+                // Format tanggal untuk ditampilkan di UI
+                val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                sdf.timeZone = TimeZone.getTimeZone("UTC")
+                val formattedDate = "${sdf.format(Date(startDate))} - ${sdf.format(Date(endDate))}"
+                binding.tietDateRange.setText(formattedDate)
+                binding.btnClearDateFilter.visibility = View.VISIBLE
+            }
+        }
+
+        // Listener untuk tombol hapus filter tanggal
+        binding.btnClearDateFilter.setOnClickListener {
+            viewModel.setDateRange(null, null) // Hapus filter di ViewModel
+            binding.tietDateRange.setText("Semua Waktu")
+            it.visibility = View.GONE
+        }
+    }
+
     private fun setupFilterDropdown() {
         val filterOptions = listOf("Semua Laporan", "Terlapor", "Ditangani")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filterOptions)
@@ -99,12 +147,15 @@ class HistoryActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.isLoading.observe(this) { isLoading ->
-            binding.swipeRefreshLayout.isRefreshing = isLoading
-
+            // Hanya tampilkan progress bar utama jika daftar kosong
             if (isLoading && historyAdapter.currentList.isEmpty()) {
                 binding.progressBar.visibility = View.VISIBLE
             } else {
                 binding.progressBar.visibility = View.GONE
+            }
+            // Swipe refresh indicator diatur secara terpisah
+            if(!isLoading) {
+                binding.swipeRefreshLayout.isRefreshing = false
             }
         }
 

@@ -28,6 +28,53 @@
             app:titleTextColor="?attr/colorOnPrimary" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <LinearLayout
+        android:id="@+id/date_filter_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appbar">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_date_range"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Filter Rentang Tanggal"
+            app:startIconDrawable="@drawable/ic_date_range">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_date_range"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:text="Semua Waktu" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/btn_clear_date_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Hapus filter tanggal"
+            android:src="@drawable/ic_clear"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+
     <!-- Card untuk bagian Statistik -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_stats"
@@ -38,7 +85,7 @@
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appbar">
+        app:layout_constraintTop_toBottomOf="@id/date_filter_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,7 +149,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Filter Laporan"
+        android:hint="Filter Status Laporan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/card_stats">
@@ -116,7 +163,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- TAMBAHKAN: SwipeRefreshLayout untuk membungkus RecyclerView -->
+    <!-- SwipeRefreshLayout untuk membungkus RecyclerView -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="0dp"

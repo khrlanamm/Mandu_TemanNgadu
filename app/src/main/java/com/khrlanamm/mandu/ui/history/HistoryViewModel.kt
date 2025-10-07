@@ -8,7 +8,6 @@ import com.khrlanamm.mandu.ui.history.data.HistoryRepository
 import com.khrlanamm.mandu.ui.history.data.Report
 import kotlinx.coroutines.launch
 
-// data class Stats tidak perlu diubah
 data class Stats(val count: Int = 0, val percentage: Float = 0f)
 
 class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() {
@@ -19,7 +18,6 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
     private val _toastMessage = MutableLiveData<String?>()
     val toastMessage: LiveData<String?> = _toastMessage
 
-    // _allReports tetap menyimpan data mentah dari Firestore
     private val _allReports = MutableLiveData<List<Report>>()
 
     private val _filteredReports = MutableLiveData<List<Report>>()
@@ -31,13 +29,16 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
     private val _handledStats = MutableLiveData<Stats>()
     val handledStats: LiveData<Stats> = _handledStats
 
-    // Variabel untuk menyimpan status filter saat ini
+    // --- State untuk Date Filter ---
+    private val _startDate = MutableLiveData<Long?>()
+    val startDate: LiveData<Long?> = _startDate
+
+    private val _endDate = MutableLiveData<Long?>()
+    val endDate: LiveData<Long?> = _endDate
+    // -----------------------------------------
+
     private var currentFilter: String = "Semua Laporan"
 
-    /**
-     * Memuat data dari repository.
-     * Fungsi ini sekarang akan langsung menerapkan filter pada data yang baru diterima.
-     */
     fun loadReports() {
         _isLoading.value = true
         viewModelScope.launch {
@@ -47,54 +48,76 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
                     if (freshReports.isEmpty()) {
                         _toastMessage.postValue("Belum ada Laporan")
                     }
-                    _allReports.postValue(freshReports) // Update daftar lengkap
-                    calculateStats(freshReports) // Hitung statistik dari data baru
-
-                    // LANGSUNG TERAPKAN FILTER PADA DATA BARU, JANGAN MENUNGGU
-                    val filteredList = applyFilter(freshReports, currentFilter)
-                    _filteredReports.postValue(filteredList)
-
+                    // Urutkan laporan berdasarkan timestamp, yang terbaru di atas
+                    val sortedReports = freshReports.sortedByDescending { it.timestamp }
+                    _allReports.postValue(sortedReports)
+                    // Langsung kirim data baru ke fungsi filter untuk mengatasi masalah initial load
+                    applyAllFilters(reportsToFilter = sortedReports)
                 }.onFailure {
                     _toastMessage.postValue("Gagal memuat data: ${it.message}")
                 }
             } finally {
-                // Pastikan loading selalu dihentikan
                 _isLoading.postValue(false)
             }
         }
     }
 
     /**
-     * Fungsi yang dipanggil saat pengguna mengubah pilihan filter di dropdown.
+     * Fungsi baru untuk mengatur rentang tanggal dan memicu pemfilteran ulang.
      */
-    fun filterReports(statusFilter: String) {
-        // Simpan status filter yang baru dipilih
-        this.currentFilter = statusFilter
-
-        val allCurrentReports = _allReports.value ?: emptyList()
-        val filteredList = applyFilter(allCurrentReports, statusFilter)
-        _filteredReports.value = filteredList
-
-        if (allCurrentReports.isNotEmpty() && filteredList.isEmpty()) {
-            _toastMessage.value = "Tidak ada Riwayat Laporan dengan status ${statusFilter.uppercase()}"
-        }
+    fun setDateRange(start: Long?, end: Long?) {
+        _startDate.value = start
+        _endDate.value = end // PERBAIKAN: Tambahkan baris ini untuk menyimpan tanggal akhir
+        applyAllFilters()
     }
 
     /**
-     * Helper function untuk memusatkan logika filter.
-     * @param reports Daftar laporan yang akan difilter.
-     * @param filter Kriteria filter ("Semua Laporan", "Terlapor", "Ditangani").
-     * @return Daftar laporan yang sudah difilter.
+     * Memperbarui filter status dan memicu pemfilteran ulang.
      */
-    private fun applyFilter(reports: List<Report>, filter: String): List<Report> {
-        return when (filter) {
-            "Terlapor" -> reports.filter { it.status.equals("terlapor", ignoreCase = true) }
-            "Ditangani" -> reports.filter { it.status.equals("ditangani", ignoreCase = true) }
-            else -> reports // "Semua Laporan"
+    fun filterReports(statusFilter: String) {
+        this.currentFilter = statusFilter
+        applyAllFilters()
+    }
+
+    /**
+     * Fungsi ini sekarang bisa menerima daftar laporan secara langsung
+     * untuk menghindari race condition saat pertama kali load.
+     */
+    private fun applyAllFilters(reportsToFilter: List<Report>? = null) {
+        // Jika `reportsToFilter` diberikan (dari loadReports), gunakan itu.
+        // Jika tidak (dari filter biasa), gunakan data yang sudah tersimpan di _allReports.
+        val allCurrentReports = reportsToFilter ?: _allReports.value ?: emptyList()
+        var baseFilteredList = allCurrentReports
+
+        // 1. Terapkan filter rentang tanggal TERLEBIH DAHULU
+        val start = _startDate.value
+        val end = _endDate.value
+        if (start != null && end != null) {
+            // Tambahkan 1 hari (dalam milidetik) ke tanggal akhir agar inklusif
+            val inclusiveEndDate = end + 86400000
+            baseFilteredList = baseFilteredList.filter { report ->
+                val reportTime = report.timestamp.toDate().time
+                reportTime >= start && reportTime < inclusiveEndDate
+            }
+        }
+
+        // 2. HITUNG ULANG STATISTIK berdasarkan daftar yang sudah difilter tanggal.
+        calculateStats(baseFilteredList)
+
+        // 3. Terapkan filter status pada daftar yang sudah difilter tanggal.
+        val finalFilteredList = when (currentFilter) {
+            "Terlapor" -> baseFilteredList.filter { it.status.equals("terlapor", ignoreCase = true) }
+            "Ditangani" -> baseFilteredList.filter { it.status.equals("ditangani", ignoreCase = true) }
+            else -> baseFilteredList // "Semua Laporan"
+        }
+
+        _filteredReports.postValue(finalFilteredList)
+
+        if (allCurrentReports.isNotEmpty() && finalFilteredList.isEmpty()) {
+            _toastMessage.postValue("Tidak ada laporan yang cocok dengan filter")
         }
     }
 
-    // Fungsi calculateStats dan onToastShown tidak perlu diubah
     private fun calculateStats(reports: List<Report>) {
         if (reports.isEmpty()) {
             _reportedStats.value = Stats(0, 0f)
