@@ -14,10 +14,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
@@ -51,26 +53,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        // --- PERUBAHAN 1: Aktifkan Edge-to-Edge ---
-        // Panggil ini SEBELUM setContentView
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // --- PERUBAHAN 2: Tambahkan Insets Listener ---
-        // Untuk memberikan padding agar konten tidak tertutup status bar atau navigation bar
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Terapkan padding atas pada AppBarLayout sesuai tinggi status bar
             binding.appbar.setPadding(insets.left, insets.top, insets.right, 0)
-
-            // Terapkan padding bawah pada konten utama (RecyclerView/SwipeRefresh) sesuai tinggi navigation bar
-            // Ini mencegah FAB dan item terakhir di list tertutup oleh navigation bar
             binding.swipeRefreshLayout.setPadding(0, 0, 0, insets.bottom)
 
-            WindowInsetsCompat.CONSUMED // Kembalikan insets yang sudah digunakan
+            val fabMargin = resources.getDimensionPixelSize(R.dimen.fab_margin)
+            binding.fab.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                bottomMargin = insets.bottom + fabMargin
+            }
+
+            WindowInsetsCompat.CONSUMED
         }
 
 

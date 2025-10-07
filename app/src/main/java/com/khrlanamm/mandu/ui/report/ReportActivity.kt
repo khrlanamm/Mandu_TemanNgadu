@@ -130,8 +130,72 @@ class ReportActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (validateInput()) {
-                uploadImageAndSaveReport()
+                // PERUBAHAN: Tampilkan dialog konfirmasi sebelum mengirim
+                showSendConfirmationDialog()
             }
+        }
+
+        binding.fabWhatsapp.setOnClickListener {
+            // PERUBAHAN: Tampilkan dialog konfirmasi sebelum membuka WhatsApp
+            showWhatsAppConfirmationDialog()
+        }
+    }
+
+    // --- DIALOG BARU ---
+    private fun showWhatsAppConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Hubungi Bimbingan Konseling")
+            .setMessage("Anda akan diarahkan ke WhatsApp Bimbingan Konseling SMAN 1 Sukodadi.")
+            .setIcon(R.drawable.app_logo)
+            .setPositiveButton("Lanjutkan") { dialog, _ ->
+                openWhatsApp()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Batal") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showSendConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Kirim Laporan?")
+            .setMessage("Pastikan semua data yang Anda masukkan sudah benar.")
+            .setIcon(R.drawable.app_logo)
+            .setPositiveButton("Kirim") { dialog, _ ->
+                uploadImageAndSaveReport()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Batal") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showSuccessDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Laporan Berhasil Terkirim")
+            .setMessage("Laporan Anda sudah kami terima. Ingat, Anda tidak sendirian dan Anda telah berani melangkah maju. Kami akan segera menindaklanjuti laporan ini. Kerahasiaan anda akan kami jaga.")
+            .setIcon(R.drawable.app_logo)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                finish() // Menutup activity setelah dialog ditutup
+            }
+            .setCancelable(false) // Mencegah dialog ditutup dengan tombol kembali
+            .show()
+    }
+    // --- AKHIR DIALOG BARU ---
+
+    private fun openWhatsApp() {
+        val phoneNumber = "+6285731774570"
+        val url = "https://wa.me/$phoneNumber"
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "WhatsApp tidak terpasang.", Toast.LENGTH_SHORT).show()
+            Log.e("ReportActivity", "Error opening WhatsApp", e)
         }
     }
 
@@ -141,12 +205,8 @@ class ReportActivity : AppCompatActivity() {
             .setTitle("Pilih Sumber Gambar")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> {
-                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                    }
-                    1 -> {
-                        checkStoragePermissionAndOpenGallery()
-                    }
+                    0 -> requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    1 -> checkStoragePermissionAndOpenGallery()
                 }
             }
             .show()
@@ -199,8 +259,7 @@ class ReportActivity : AppCompatActivity() {
         firestore.collection("reports")
             .add(report)
             .addOnSuccessListener {
-                Toast.makeText(this, "Laporan berhasil dikirim!", Toast.LENGTH_SHORT).show()
-
+                // PERUBAHAN: Ganti Toast dengan dialog sukses
                 val data = hashMapOf(
                     "peran" to selectedRole,
                     "deskripsi" to description,
@@ -219,8 +278,9 @@ class ReportActivity : AppCompatActivity() {
                         } else {
                             Log.d("ReportActivity", "Notifikasi berhasil dipicu.")
                         }
+                        // Tampilkan dialog sukses setelah semua proses selesai
                         showLoading(false)
-                        finish()
+                        showSuccessDialog()
                     }
             }
             .addOnFailureListener { e ->

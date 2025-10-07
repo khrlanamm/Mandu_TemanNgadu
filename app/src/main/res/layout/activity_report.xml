@@ -170,7 +170,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Deskripsi"
+                    android:hint="Deskripsi (Kronologi)"
                     app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -225,6 +225,21 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Tombol WhatsApp Diperbaiki -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_whatsapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="Hubungi Bimbingan Konseling via WhatsApp"
+        app:backgroundTint="#25D366"
+        app:layout_constraintBottom_toTopOf="@id/button_kirim_laporan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_wa"
+        app:fabSize="normal"
+        app:tint="@null" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
