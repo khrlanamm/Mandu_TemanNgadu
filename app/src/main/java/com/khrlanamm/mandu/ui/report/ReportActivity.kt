@@ -1,24 +1,20 @@
 package com.khrlanamm.mandu.ui.report
 
 import android.Manifest
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -26,8 +22,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.ktx.functions
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.functions.functions
+import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityReportBinding
@@ -47,13 +43,14 @@ class ReportActivity : AppCompatActivity() {
     private lateinit var functions: FirebaseFunctions
 
     private var imageUri: Uri? = null
-
-    private val requestGalleryPermissionLauncher: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                openGallery()
+    private val pickMediaLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                imageUri = uri
+                binding.ivPreviewBukti.setImageURI(imageUri)
+                binding.ivPreviewBukti.visibility = View.VISIBLE
             } else {
-                Toast.makeText(this, "Izin galeri ditolak", Toast.LENGTH_SHORT).show()
+                Log.d("PhotoPicker", "Tidak ada media yang dipilih")
             }
         }
 
@@ -63,19 +60,6 @@ class ReportActivity : AppCompatActivity() {
                 openCamera()
             } else {
                 Toast.makeText(this, "Izin kamera ditolak", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-    private val pickImageLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                imageUri = result.data?.data
-                if (imageUri != null) {
-                    binding.ivPreviewBukti.setImageURI(imageUri)
-                    binding.ivPreviewBukti.visibility = View.VISIBLE
-                } else {
-                    Toast.makeText(this, "Gagal mendapatkan URI gambar", Toast.LENGTH_SHORT).show()
-                }
             }
         }
 
@@ -101,8 +85,10 @@ class ReportActivity : AppCompatActivity() {
 
             binding.appbar.setPadding(insets.left, insets.top, insets.right, 0)
 
-            val layoutParams = binding.buttonKirimLaporan.layoutParams as android.view.ViewGroup.MarginLayoutParams
-            layoutParams.bottomMargin = insets.bottom + resources.getDimensionPixelSize(R.dimen.fab_margin)
+            val layoutParams =
+                binding.buttonKirimLaporan.layoutParams as android.view.ViewGroup.MarginLayoutParams
+            layoutParams.bottomMargin =
+                insets.bottom + resources.getDimensionPixelSize(R.dimen.fab_margin)
             binding.buttonKirimLaporan.layoutParams = layoutParams
 
             WindowInsetsCompat.CONSUMED
@@ -126,22 +112,23 @@ class ReportActivity : AppCompatActivity() {
 
         binding.buttonKirimLaporan.setOnClickListener {
             if (auth.currentUser == null) {
-                Toast.makeText(this, "Anda harus masuk untuk dapat mengirim laporan.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Anda harus masuk untuk dapat mengirim laporan.",
+                    Toast.LENGTH_LONG
+                ).show()
                 return@setOnClickListener
             }
             if (validateInput()) {
-                // PERUBAHAN: Tampilkan dialog konfirmasi sebelum mengirim
                 showSendConfirmationDialog()
             }
         }
 
         binding.fabWhatsapp.setOnClickListener {
-            // PERUBAHAN: Tampilkan dialog konfirmasi sebelum membuka WhatsApp
             showWhatsAppConfirmationDialog()
         }
     }
 
-    // --- DIALOG BARU ---
     private fun showWhatsAppConfirmationDialog() {
         AlertDialog.Builder(this)
             .setTitle("Hubungi Bimbingan Konseling")
@@ -179,12 +166,11 @@ class ReportActivity : AppCompatActivity() {
             .setIcon(R.drawable.app_logo)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
-                finish() // Menutup activity setelah dialog ditutup
+                finish()
             }
-            .setCancelable(false) // Mencegah dialog ditutup dengan tombol kembali
+            .setCancelable(false)
             .show()
     }
-    // --- AKHIR DIALOG BARU ---
 
     private fun openWhatsApp() {
         val phoneNumber = "+6285731774570"
@@ -206,7 +192,9 @@ class ReportActivity : AppCompatActivity() {
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                    1 -> checkStoragePermissionAndOpenGallery()
+                    1 -> {
+                        pickMediaLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    }
                 }
             }
             .show()
@@ -259,7 +247,6 @@ class ReportActivity : AppCompatActivity() {
         firestore.collection("reports")
             .add(report)
             .addOnSuccessListener {
-                // PERUBAHAN: Ganti Toast dengan dialog sukses
                 val data = hashMapOf(
                     "peran" to selectedRole,
                     "deskripsi" to description,
@@ -278,14 +265,14 @@ class ReportActivity : AppCompatActivity() {
                         } else {
                             Log.d("ReportActivity", "Notifikasi berhasil dipicu.")
                         }
-                        // Tampilkan dialog sukses setelah semua proses selesai
                         showLoading(false)
                         showSuccessDialog()
                     }
             }
             .addOnFailureListener { e ->
                 showLoading(false)
-                Toast.makeText(this, "Gagal mengirim laporan: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Gagal mengirim laporan: ${e.message}", Toast.LENGTH_LONG)
+                    .show()
             }
     }
 
@@ -302,21 +289,24 @@ class ReportActivity : AppCompatActivity() {
                         saveReportToFirestore(imageUrl)
                     }.addOnFailureListener {
                         showLoading(false)
-                        Toast.makeText(this, "Gagal mendapatkan URL gambar: ${it.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Gagal mendapatkan URL gambar: ${it.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
                 .addOnFailureListener {
                     showLoading(false)
-                    Toast.makeText(this, "Gagal mengunggah gambar: ${it.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "Gagal mengunggah gambar: ${it.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
         } else {
             saveReportToFirestore(null)
         }
-    }
-
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickImageLauncher.launch(intent)
     }
 
     private fun setupToolbar() {
@@ -324,30 +314,6 @@ class ReportActivity : AppCompatActivity() {
         supportActionBar?.apply {
             title = getString(R.string.action_report)
             setDisplayHomeAsUpEnabled(true)
-        }
-    }
-
-    private fun checkStoragePermissionAndOpenGallery() {
-        val permissionToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
-
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                permissionToRequest
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                openGallery()
-            }
-            shouldShowRequestPermissionRationale(permissionToRequest) -> {
-                Toast.makeText(this, "Izin galeri dibutuhkan untuk memilih gambar bukti.", Toast.LENGTH_LONG).show()
-                requestGalleryPermissionLauncher.launch(permissionToRequest)
-            }
-            else -> {
-                requestGalleryPermissionLauncher.launch(permissionToRequest)
-            }
         }
     }
 

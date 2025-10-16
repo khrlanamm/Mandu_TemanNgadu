@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.khrlanamm.mandu.ui.detail.data.DetailRepository
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale

@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.data.AdminUID
 import com.khrlanamm.mandu.databinding.ActivityProfileBinding

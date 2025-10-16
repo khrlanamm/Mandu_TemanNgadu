@@ -1,4 +1,4 @@
-package com.khrlanamm.mandu.ui.detail
+package com.khrlanamm.mandu.ui.detail.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await

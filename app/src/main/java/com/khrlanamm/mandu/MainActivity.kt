@@ -22,8 +22,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 import com.khrlanamm.mandu.databinding.ActivityMainBinding
 import com.khrlanamm.mandu.model.ArticleAdapter
 import com.khrlanamm.mandu.model.HomeViewModel

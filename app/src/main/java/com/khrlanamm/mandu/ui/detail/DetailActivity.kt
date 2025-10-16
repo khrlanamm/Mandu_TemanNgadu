@@ -21,6 +21,7 @@ import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.data.AdminUID
 import com.khrlanamm.mandu.databinding.ActivityDetailBinding
 import com.khrlanamm.mandu.ui.history.data.Report
+import com.khrlanamm.mandu.ui.detail.data.DetailRepository
 import kotlinx.coroutines.launch
 
 class DetailActivity : AppCompatActivity() {

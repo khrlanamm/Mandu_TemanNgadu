@@ -10,39 +10,41 @@ import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 import com.khrlanamm.mandu.MainActivity
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityAuthBinding
+import kotlinx.coroutines.launch
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.CustomCredential
+import androidx.credentials.exceptions.GetCredentialException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
-    var isDataReady = false
+    private lateinit var credentialManager: CredentialManager
+    private var isDataReady = false
 
     companion object {
         const val EXTRA_FROM_LOGOUT = "extra_from_logout"
+        private const val TAG = "AuthActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val fromLogout = intent.getBooleanExtra(EXTRA_FROM_LOGOUT, false)
-        if (fromLogout) {
-            setTheme(R.style.Theme_Mandu)
-        }
+        if (fromLogout) setTheme(R.style.Theme_Mandu)
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
@@ -51,88 +53,106 @@ class AuthActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            isDataReady = true
-        }, 1000)
-
+        // Delay kecil untuk splash pre-draw (sesuai kode awal)
+        Handler(Looper.getMainLooper()).postDelayed({ isDataReady = true }, 1000)
         val content: View = findViewById(android.R.id.content)
-        content.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    return if (isDataReady) {
-                        content.viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } else {
-                        false
-                    }
-                }
+        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                return if (isDataReady) {
+                    content.viewTreeObserver.removeOnPreDrawListener(this); true
+                } else false
             }
-        )
+        })
 
         auth = Firebase.auth
+        credentialManager = CredentialManager.create(this)
 
-        if (auth.currentUser != null) {
-            navigateToMain(auth.currentUser)
+        // Jika sudah login, langsung ke MainActivity
+        auth.currentUser?.let {
+            navigateToMain(it)
             return
         }
 
-        configureGoogleSignIn()
         playAnimations()
 
         binding.buttonGoogleSignIn.setOnClickListener {
-            signIn()
+            signInWithGoogle()
         }
     }
 
-    private fun configureGoogleSignIn() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
+    /** ----- Google Sign-In (modern) via Credential Manager + Google Identity ----- */
+    private fun signInWithGoogle() {
+        updateUI(isLoading = true)
+
+        // Opsi Google ID (pastikan default_web_client_id adalah **Web client ID** dari Firebase console)
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(false) // true jika ingin hanya akun yg sudah di-authorize
+            .setServerClientId(getString(R.string.default_web_client_id))
+            .setAutoSelectEnabled(false) // true jika ingin auto select saat hanya ada 1 opsi
             .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-    }
 
-    private fun signIn() {
-        updateUI(true) // Memulai loading
-        val signInIntent = googleSignInClient.signInIntent
-        googleSignInLauncher.launch(signInIntent)
-    }
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
 
-    private val googleSignInLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        lifecycleScope.launch {
             try {
-                val account = task.getResult(ApiException::class.java)!!
-                firebaseAuthWithGoogle(account.idToken!!)
-            } catch (e: ApiException) {
-                Log.w("AuthActivity", "Google sign in failed", e)
-                Toast.makeText(this, "Gagal masuk dengan Google: ${e.message}", Toast.LENGTH_SHORT).show()
-                updateUI(false) // Menghentikan loading
+                val result = credentialManager.getCredential(this@AuthActivity, request)
+                val credential = result.credential
+                if (credential is CustomCredential &&
+                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                ) {
+                    val googleIdTokenCredential =
+                        GoogleIdTokenCredential.createFrom(credential.data)
+                    val idToken = googleIdTokenCredential.idToken
+                    Log.d(TAG, "Google ID Token acquired")
+                    firebaseAuthWithGoogle(idToken)
+                } else {
+                    Log.w(TAG, "Unexpected credential type: ${credential.javaClass.name}")
+                    Toast.makeText(
+                        this@AuthActivity,
+                        "Gagal masuk: kredensial tidak dikenali",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    updateUI(false)
+                }
+            } catch (e: GetCredentialException) {
+                Log.w(TAG, "getCredential() failed", e)
+                val userMsg = when (e.javaClass.simpleName) {
+                    "NoCredentialException" -> "Login dibatalkan atau tidak ada akun yang dipilih"
+                    else -> "Gagal masuk: ${e.localizedMessage ?: "Kesalahan tidak diketahui"}"
+                }
+                Toast.makeText(this@AuthActivity, userMsg, Toast.LENGTH_SHORT).show()
+                updateUI(false)
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected sign-in error", e)
+                Toast.makeText(
+                    this@AuthActivity,
+                    "Terjadi kesalahan saat masuk",
+                    Toast.LENGTH_SHORT
+                ).show()
+                updateUI(false)
             }
-        } else {
-            Log.w("AuthActivity", "Google sign in flow cancelled. Result code: ${result.resultCode}")
-            Toast.makeText(this, "Login dengan Google dibatalkan", Toast.LENGTH_SHORT).show()
-            updateUI(false) // Menghentikan loading
         }
     }
 
+    /** Firebase auth menggunakan Google ID token */
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d("AuthActivity", "signInWithCredential_firebase:success")
+                    Log.d(TAG, "signInWithCredential_firebase:success")
                     navigateToMain(task.result.user)
                 } else {
-                    Log.w("AuthActivity", "signInWithCredential_firebase:failure", task.exception)
+                    Log.w(TAG, "signInWithCredential_firebase:failure", task.exception)
                     Toast.makeText(this, "Autentikasi Firebase gagal", Toast.LENGTH_SHORT).show()
-                    updateUI(false) // Menghentikan loading
+                    updateUI(false)
                 }
             }
     }
 
+    /** ----- UI helpers ----- */
     private fun navigateToMain(user: FirebaseUser?) {
         if (user == null) return
         val intent = Intent(this, MainActivity::class.java).apply {
@@ -155,12 +175,11 @@ class AuthActivity : AppCompatActivity() {
             binding.textLongDescription,
             binding.buttonGoogleSignIn
         )
-
         viewsToAnimate.forEachIndexed { index, view ->
             Handler(Looper.getMainLooper()).postDelayed({
                 view.visibility = View.VISIBLE
                 view.startAnimation(fadeIn)
-            }, (index * 400L))
+            }, index * 400L)
         }
     }
 
