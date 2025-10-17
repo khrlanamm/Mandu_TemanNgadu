@@ -1,6 +1,7 @@
 package com.khrlanamm.mandu.ui.detail
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -16,6 +17,12 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.data.AdminUID
@@ -29,6 +36,7 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
     private lateinit var report: Report
     private val auth = FirebaseAuth.getInstance()
+    private lateinit var shimmerLayout: ShimmerFrameLayout // Deklarasi ShimmerFrameLayout
 
     private val viewModel: DetailViewModel by viewModels {
         DetailViewModelFactory(DetailRepository())
@@ -61,6 +69,9 @@ class DetailActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
+        // Inisialisasi shimmerLayout
+        shimmerLayout = binding.shimmerViewContainerDetail
+
         setupToolbar()
 
         report = if (Build.VERSION.SDK_INT >= 33) {
@@ -86,9 +97,38 @@ class DetailActivity : AppCompatActivity() {
 
     private fun populateData() {
         binding.apply {
+            // Mulai efek shimmer
+            shimmerLayout.startShimmer()
+
+            // Atur opsi permintaan, termasuk timeout 10 detik
+            val requestOptions = RequestOptions()
+                .timeout(10000) // 10000 milidetik = 10 detik
+
             Glide.with(this@DetailActivity)
                 .load(report.urlBukti)
-                .placeholder(R.drawable.placeholder_image)
+                .apply(requestOptions) // Terapkan opsi timeout
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        shimmerLayout.hideShimmer()
+                        return false // false agar Glide menampilkan error drawable
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        shimmerLayout.hideShimmer()
+                        return false // false agar Glide melanjutkan menampilkan gambar
+                    }
+                })
                 .error(R.drawable.placeholder_image)
                 .into(ivProof)
 

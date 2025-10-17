@@ -1,5 +1,6 @@
 package com.khrlanamm.mandu.ui.history
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -7,6 +8,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ItemHistoryBinding
 import com.khrlanamm.mandu.ui.history.data.Report
@@ -30,12 +37,44 @@ class HistoryAdapter(private val onItemClick: (Report) -> Unit) :
         // Tambahkan parameter onItemClick pada fungsi bind
         fun bind(report: Report, onItemClick: (Report) -> Unit) {
             val context = binding.root.context
+            val shimmerLayout: ShimmerFrameLayout = binding.shimmerViewContainerHistory
+
             binding.apply {
+                // Mulai efek shimmer
+                shimmerLayout.startShimmer()
+
+                // Atur opsi permintaan, termasuk timeout 10 detik
+                val requestOptions = RequestOptions()
+                    .timeout(10000) // 10000 milidetik = 10 detik
+
                 // Memuat gambar dengan Glide, jika null pakai placeholder
                 Glide.with(context)
                     .load(report.urlBukti)
-                    .placeholder(R.drawable.placeholder_image)
-                    .error(R.drawable.placeholder_image)
+                    .apply(requestOptions) // Terapkan opsi timeout
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            shimmerLayout.hideShimmer()
+                            return false // false agar Glide menampilkan error drawable
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            shimmerLayout.hideShimmer()
+                            return false // false agar Glide melanjutkan menampilkan gambar
+                        }
+                    })
+                    .placeholder(R.drawable.placeholder_image) // Ini akan ditampilkan jika URL null
+                    .error(R.drawable.placeholder_image) // Ini akan ditampilkan jika terjadi error setelah shimmer berhenti
                     .into(ivReportImage)
 
                 // Mengisi data teks

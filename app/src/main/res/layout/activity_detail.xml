@@ -9,256 +9,265 @@
 
     <!-- AppBar dan Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/tosca_mandu"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    android:id="@+id/appbar"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:background="@color/tosca_mandu"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="?attr/colorOnPrimary"
-            app:title="@string/action_detail"
-            app:titleTextColor="?attr/colorOnPrimary" />
-    </com.google.android.material.appbar.AppBarLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="?attr/colorOnPrimary"
+        app:title="@string/action_detail"
+        app:titleTextColor="?attr/colorOnPrimary" />
+</com.google.android.material.appbar.AppBarLayout>
 
     <!-- Konten yang bisa di-scroll -->
     <ScrollView
-        android:id="@+id/scroll_view"
+    android:id="@+id/scroll_view"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:clipToPadding="false"
+    android:paddingBottom="16dp"
+    app:layout_constraintBottom_toTopOf="@+id/guideline_button"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/appbar">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Status dan Peran Laporan -->
+        <TextView
+        android:id="@+id/tv_status_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_status_terlapor"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="TERLAPOR" />
+
+        <TextView
+            android:id="@+id/tv_role_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_peran_saksi"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="SAKSI" />
+
+        <!-- Shimmer Container for Proof Image -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container_detail"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline_button"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        app:shimmer_auto_start="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appbar">
+        app:layout_constraintTop_toBottomOf="@id/tv_status_detail">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_proof"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/placeholder_bg"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+        <!-- Detail Laporan -->
+        <TextView
+        android:id="@+id/label_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_report_time"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/shimmer_view_container_detail" />
+
+        <TextView
+            android:id="@+id/tv_timestamp_detail"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_timestamp"
+            tools:text="11/06/2024 08:48" />
 
-            <!-- Status dan Peran Laporan -->
-            <TextView
-                android:id="@+id/tv_status_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_status_terlapor"
-                android:paddingStart="12dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="6dp"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="TERLAPOR" />
+        <TextView
+            android:id="@+id/label_date_of_incident"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/label_date_of_incident"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_timestamp_detail" />
 
-            <TextView
-                android:id="@+id/tv_role_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_peran_saksi"
-                android:paddingStart="12dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="6dp"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="SAKSI" />
+        <TextView
+            android:id="@+id/tv_date_of_incident_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_date_of_incident"
+            tools:text="11/06/2025" />
 
-            <!-- Gambar Bukti -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_proof"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_status_detail"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
-                tools:src="@tools:sample/backgrounds/scenic" />
+        <TextView
+            android:id="@+id/label_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/label_location_of_incident"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_date_of_incident_detail" />
 
-            <!-- Detail Laporan -->
-            <TextView
-                android:id="@+id/label_timestamp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/label_report_time"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_proof" />
+        <TextView
+            android:id="@+id/tv_location_detail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_location"
+            tools:text="Jl. Merdeka No. 10, Jakarta Pusat, DKI Jakarta" />
 
-            <TextView
-                android:id="@+id/tv_timestamp_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_timestamp"
-                tools:text="11/06/2024 08:48" />
+        <TextView
+            android:id="@+id/label_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/label_frequency_of_incident"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_location_detail" />
 
-            <TextView
-                android:id="@+id/label_date_of_incident"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/label_date_of_incident"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_timestamp_detail" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_frequency"
+            tools:text="Pertama Kali" />
 
-            <TextView
-                android:id="@+id/tv_date_of_incident_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_date_of_incident"
-                tools:text="11/06/2025" />
+        <TextView
+            android:id="@+id/label_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/label_full_description"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chip_frequency" />
 
-            <TextView
-                android:id="@+id/label_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/label_location_of_incident"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_date_of_incident_detail" />
+        <TextView
+            android:id="@+id/tv_description_detail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:lineSpacingExtra="4dp"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_description"
+            tools:text="@string/long_auth_description" />
 
-            <TextView
-                android:id="@+id/tv_location_detail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_location"
-                tools:text="Jl. Merdeka No. 10, Jakarta Pusat, DKI Jakarta" />
+        <TextView
+            android:id="@+id/label_whatsapp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/label_reporter_number"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_description_detail" />
 
-            <TextView
-                android:id="@+id/label_frequency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/label_frequency_of_incident"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_location_detail" />
+        <TextView
+            android:id="@+id/tv_whatsapp_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_whatsapp"
+            tools:text="08123456789" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_frequency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_frequency"
-                tools:text="Pertama Kali" />
+        <!-- Switch untuk Admin -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_handled"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/switch_mark_as_handled"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_whatsapp_detail"
+        tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/label_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/label_full_description"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/chip_frequency" />
-
-            <TextView
-                android:id="@+id/tv_description_detail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:lineSpacingExtra="4dp"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_description"
-                tools:text="@string/long_auth_description" />
-
-            <TextView
-                android:id="@+id/label_whatsapp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/label_reporter_number"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_description_detail" />
-
-            <TextView
-                android:id="@+id/tv_whatsapp_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_whatsapp"
-                tools:text="08123456789" />
-
-            <!-- Switch untuk Admin -->
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_handled"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/switch_mark_as_handled"
-                android:textSize="16sp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_whatsapp_detail"
-                tools:visibility="visible" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
 
     <!-- Guideline untuk memisahkan tombol dan scrollview -->
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="80dp"/>
+    android:id="@+id/guideline_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_end="80dp"/>
 
     <!-- Tombol Aksi di Bawah -->
     <Button
-        android:id="@+id/btn_contact_reporter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/button_contact_reporter"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_cancel_report"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline_button"
-        tools:visibility="visible" />
+    android:id="@+id/btn_contact_reporter"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="8dp"
+    android:text="@string/button_contact_reporter"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/btn_cancel_report"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="@id/guideline_button"
+    tools:visibility="visible" />
 
     <Button
         android:id="@+id/btn_cancel_report"
@@ -276,14 +285,14 @@
 
     <!-- ProgressBar untuk loading -->
     <ProgressBar
-        android:id="@+id/progress_bar_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+    android:id="@+id/progress_bar_detail"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,17 +15,27 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Gambar Laporan -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/iv_report_image"
+        <!-- Shimmer Container for Image -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_view_container_history"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"
+            app:shimmer_auto_start="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-            tools:src="@android:color/darker_gray" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_report_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/placeholder_bg"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+                tools:src="@android:color/darker_gray" />
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
 
         <!-- Grup Teks Tengah -->
         <LinearLayout
@@ -37,7 +47,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tv_status"
-            app:layout_constraintStart_toEndOf="@id/iv_report_image"
+            app:layout_constraintStart_toEndOf="@id/shimmer_view_container_history"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
