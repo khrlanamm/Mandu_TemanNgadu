@@ -40,6 +40,22 @@
 
     <!--History-->
     <string name="action_history">Riwayat Laporan</string>
+    <string name="title_date_range_picker">Pilih Rentang Tanggal</string>
+    <string name="all_time">Semua Waktu</string>
+    <string-array name="history_filter_options">
+        <item>Semua Laporan</item>
+        <item>Terlapor</item>
+        <item>Ditangani</item>
+    </string-array>
+    <string name="reported_stats">Terlapor : %1$d (%2$s%%)</string>
+    <string name="handled_stats">Ditangani : %1$d (%2$s%%)</string>
+    <string name="report_date">Tanggal: %1$s</string>
+    <string name="report_location">Lokasi: %1$s</string>
+    <string name="status_reported">TERLAPOR</string>
+    <string name="status_handled">DITANGANI</string>
+    <string name="role_victim">KORBAN</string>
+    <string name="role_witness">SAKSI</string>
+
 
     <!--Detail-->
     <string name="action_detail">Rincian Laporan</string>

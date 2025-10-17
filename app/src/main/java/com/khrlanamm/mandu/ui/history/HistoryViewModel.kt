@@ -106,8 +106,20 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
 
         // 3. Terapkan filter status pada daftar yang sudah difilter tanggal.
         val finalFilteredList = when (currentFilter) {
-            "Terlapor" -> baseFilteredList.filter { it.status.equals("terlapor", ignoreCase = true) }
-            "Ditangani" -> baseFilteredList.filter { it.status.equals("ditangani", ignoreCase = true) }
+            "Terlapor" -> baseFilteredList.filter {
+                it.status.equals(
+                    "terlapor",
+                    ignoreCase = true
+                )
+            }
+
+            "Ditangani" -> baseFilteredList.filter {
+                it.status.equals(
+                    "ditangani",
+                    ignoreCase = true
+                )
+            }
+
             else -> baseFilteredList // "Semua Laporan"
         }
 
@@ -127,8 +139,8 @@ class HistoryViewModel(private val repository: HistoryRepository) : ViewModel() 
         val total = reports.size
         val reportedCount = reports.count { it.status.equals("terlapor", ignoreCase = true) }
         val handledCount = reports.count { it.status.equals("ditangani", ignoreCase = true) }
-        val reportedPercentage = if (total > 0) (reportedCount * 100f / total) else 0f
-        val handledPercentage = if (total > 0) (handledCount * 100f / total) else 0f
+        val reportedPercentage = reportedCount * 100f / total
+        val handledPercentage = handledCount * 100f / total
         _reportedStats.value = Stats(reportedCount, reportedPercentage)
         _handledStats.value = Stats(handledCount, handledPercentage)
     }

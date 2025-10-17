@@ -2,6 +2,7 @@ package com.khrlanamm.mandu.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -10,12 +11,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.auth
-import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.data.AdminUID
 import com.khrlanamm.mandu.databinding.ActivityProfileBinding
@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding
+    private lateinit var credentialManager: CredentialManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +36,11 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        credentialManager = CredentialManager.create(this)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            // Terapkan padding atas pada parent dari Toolbar
             (binding.toolbar.parent as? View)?.setPadding(insets.left, insets.top, insets.right, 0)
-            // Terapkan padding bawah pada root view agar tombol logout tidak terpotong
             binding.root.setPadding(0, 0, 0, insets.bottom)
             WindowInsetsCompat.CONSUMED
         }
@@ -114,18 +115,32 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun logoutUser() {
-        Firebase.auth.signOut()
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        val googleSignInClient = GoogleSignIn.getClient(this, gso)
-        googleSignInClient.signOut().addOnCompleteListener {
-            val intent = Intent(this, AuthActivity::class.java)
-            intent.putExtra(AuthActivity.EXTRA_FROM_LOGOUT, true)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+        lifecycleScope.launch {
+            try {
+                // 1. Keluar dari Firebase Auth (tanpa -ktx)
+                FirebaseAuth.getInstance().signOut()
+
+                // 2. Buat request untuk clearCredentialState
+                val clearCredentialStateRequest = ClearCredentialStateRequest()
+                credentialManager.clearCredentialState(clearCredentialStateRequest)
+                Log.d("ProfileActivity", "Credential state cleared successfully.")
+
+                // 3. Navigasi kembali ke AuthActivity setelah semuanya selesai
+                val intent = Intent(this@ProfileActivity, AuthActivity::class.java).apply {
+                    putExtra(AuthActivity.EXTRA_FROM_LOGOUT, true)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+                finish()
+
+            } catch (e: Exception) {
+                Log.e("ProfileActivity", "Error during logout", e)
+                Toast.makeText(
+                    this@ProfileActivity,
+                    "Terjadi kesalahan saat keluar: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 

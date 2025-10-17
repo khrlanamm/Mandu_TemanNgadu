@@ -1,7 +1,6 @@
 package com.khrlanamm.mandu.ui.detail
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -11,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,8 +20,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.data.AdminUID
 import com.khrlanamm.mandu.databinding.ActivityDetailBinding
-import com.khrlanamm.mandu.ui.history.data.Report
 import com.khrlanamm.mandu.ui.detail.data.DetailRepository
+import com.khrlanamm.mandu.ui.history.data.Report
 import kotlinx.coroutines.launch
 
 class DetailActivity : AppCompatActivity() {
@@ -141,7 +141,8 @@ class DetailActivity : AppCompatActivity() {
 
             btnContactReporter.setOnClickListener {
                 val formattedNumber = viewModel.formatPhoneNumber(report.nomorWhatsapp)
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/$formattedNumber"))
+                val uri = "https://wa.me/$formattedNumber".toUri()
+                val intent = Intent(Intent.ACTION_VIEW, uri)
                 startActivity(intent)
             }
 
@@ -166,15 +167,19 @@ class DetailActivity : AppCompatActivity() {
                 result.onSuccess { type ->
                     when (type) {
                         "Update berhasil" -> {
-                            Toast.makeText(this, "Status berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                            val newStatus = if (binding.switchHandled.isChecked) "ditangani" else "terlapor"
+                            Toast.makeText(this, "Status berhasil diperbarui", Toast.LENGTH_SHORT)
+                                .show()
+                            val newStatus =
+                                if (binding.switchHandled.isChecked) "ditangani" else "terlapor"
                             updateStatusUI(newStatus)
                             if (newStatus == "ditangani") {
                                 binding.btnCancelReport.visibility = View.GONE
                             }
                         }
+
                         "Delete berhasil" -> {
-                            Toast.makeText(this, "Laporan berhasil dibatalkan", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Laporan berhasil dibatalkan", Toast.LENGTH_SHORT)
+                                .show()
                             finish()
                         }
                     }

@@ -51,7 +51,7 @@ class HistoryActivity : AppCompatActivity() {
 
         setupToolbar()
         setupRecyclerView()
-        setupDatePicker() // Panggil setup date picker
+        setupDatePicker()
         setupFilterDropdown()
         setupSwipeToRefresh()
         observeViewModel()
@@ -95,11 +95,14 @@ class HistoryActivity : AppCompatActivity() {
                 Pair(currentStartDate, currentEndDate)
             } else {
                 // Default ke hari ini jika tidak ada yang dipilih
-                Pair(MaterialDatePicker.todayInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds())
+                Pair(
+                    MaterialDatePicker.todayInUtcMilliseconds(),
+                    MaterialDatePicker.todayInUtcMilliseconds()
+                )
             }
 
             val picker = MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText("Pilih Rentang Tanggal")
+                .setTitleText(getString(R.string.title_date_range_picker))
                 .setSelection(selection)
                 .build()
 
@@ -123,13 +126,13 @@ class HistoryActivity : AppCompatActivity() {
         // Listener untuk tombol hapus filter tanggal
         binding.btnClearDateFilter.setOnClickListener {
             viewModel.setDateRange(null, null) // Hapus filter di ViewModel
-            binding.tietDateRange.setText("Semua Waktu")
+            binding.tietDateRange.setText(R.string.all_time)
             it.visibility = View.GONE
         }
     }
 
     private fun setupFilterDropdown() {
-        val filterOptions = listOf("Semua Laporan", "Terlapor", "Ditangani")
+        val filterOptions = resources.getStringArray(R.array.history_filter_options).toList()
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filterOptions)
         binding.actvFilter.setAdapter(adapter)
 
@@ -154,7 +157,7 @@ class HistoryActivity : AppCompatActivity() {
                 binding.progressBar.visibility = View.GONE
             }
             // Swipe refresh indicator diatur secara terpisah
-            if(!isLoading) {
+            if (!isLoading) {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
         }
@@ -172,13 +175,15 @@ class HistoryActivity : AppCompatActivity() {
 
         viewModel.reportedStats.observe(this) { stats ->
             val formattedPercentage = String.format(Locale.US, "%.1f", stats.percentage)
-            binding.tvStatsReported.text = "Terlapor : ${stats.count} (${formattedPercentage}%)"
+            binding.tvStatsReported.text =
+                getString(R.string.reported_stats, stats.count, formattedPercentage)
             binding.progressReported.progress = stats.percentage.toInt()
         }
 
         viewModel.handledStats.observe(this) { stats ->
             val formattedPercentage = String.format(Locale.US, "%.1f", stats.percentage)
-            binding.tvStatsHandled.text = "Ditangani : ${stats.count} (${formattedPercentage}%)"
+            binding.tvStatsHandled.text =
+                getString(R.string.handled_stats, stats.count, formattedPercentage)
             binding.progressHandled.progress = stats.percentage.toInt()
         }
     }

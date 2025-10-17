@@ -3,16 +3,15 @@ package com.khrlanamm.mandu.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
-import com.google.firebase.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -48,7 +47,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         Log.d(TAG, "FCM Token for admin $userId: $token")
                         val adminDocRef = Firebase.firestore.collection("admins").document(userId)
                         adminDocRef.update("fcmToken", token)
-                            .addOnSuccessListener { Log.d(TAG, "FCM token successfully updated for admin.") }
+                            .addOnSuccessListener {
+                                Log.d(
+                                    TAG,
+                                    "FCM token successfully updated for admin."
+                                )
+                            }
                             .addOnFailureListener { e -> Log.w(TAG, "Error updating FCM token", e) }
                     }
                 }
@@ -108,10 +112,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationBuilder.setStyle(NotificationCompat.BigTextStyle().bigText(messageBody))
         }
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+            val channel =
+                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
             notificationManager.createNotificationChannel(channel)
         }
 

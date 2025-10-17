@@ -1,18 +1,14 @@
 package com.khrlanamm.mandu.model
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-
-    @SuppressLint("StaticFieldLeak")
-    private val context = application.applicationContext
 
     private val db = Firebase.firestore
 

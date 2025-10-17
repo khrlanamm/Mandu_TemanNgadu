@@ -26,7 +26,11 @@ class DetailViewModel(private val repository: DetailRepository) : ViewModel() {
             if (result.isSuccess) {
                 _operationResult.value = Event(Result.success("Update berhasil"))
             } else {
-                _operationResult.value = Event(Result.failure(result.exceptionOrNull() ?: Exception("Gagal update status")))
+                _operationResult.value = Event(
+                    Result.failure(
+                        result.exceptionOrNull() ?: Exception("Gagal update status")
+                    )
+                )
             }
             _isLoading.value = false
         }
@@ -39,7 +43,11 @@ class DetailViewModel(private val repository: DetailRepository) : ViewModel() {
             if (result.isSuccess) {
                 _operationResult.value = Event(Result.success("Delete berhasil"))
             } else {
-                _operationResult.value = Event(Result.failure(result.exceptionOrNull() ?: Exception("Gagal menghapus laporan")))
+                _operationResult.value = Event(
+                    Result.failure(
+                        result.exceptionOrNull() ?: Exception("Gagal menghapus laporan")
+                    )
+                )
             }
             _isLoading.value = false
         }
@@ -49,18 +57,18 @@ class DetailViewModel(private val repository: DetailRepository) : ViewModel() {
         return when {
             number.startsWith("0") -> "+62" + number.substring(1)
             number.startsWith("62") -> "+$number"
-            !number.startsWith("+") -> "+$number" // Jika tidak ada awalan, asumsikan nomor Indonesia
+            !number.startsWith("+") -> "+$number"
             else -> number
         }
     }
 
     fun formatTimestampToWIB(timestamp: Timestamp): String {
         return try {
-            val sdf = SimpleDateFormat("dd MMMM yyyy HH:mm", Locale("id", "ID"))
-            sdf.timeZone = TimeZone.getTimeZone("Asia/Jakarta") // Set ke WIB (GMT+7)
+            val sdf = SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.forLanguageTag("id-ID"))
+            sdf.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
             val formattedDate = sdf.format(timestamp.toDate())
             "$formattedDate WIB"
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             "Invalid Date"
         }
     }

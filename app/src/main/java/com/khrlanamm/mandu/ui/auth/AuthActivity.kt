@@ -13,22 +13,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
-import com.google.firebase.Firebase
 import com.khrlanamm.mandu.MainActivity
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityAuthBinding
 import kotlinx.coroutines.launch
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.CustomCredential
-import androidx.credentials.exceptions.GetCredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import java.security.SecureRandom
 
 class AuthActivity : AppCompatActivity() {
 
@@ -53,7 +55,6 @@ class AuthActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        // Delay kecil untuk splash pre-draw (sesuai kode awal)
         Handler(Looper.getMainLooper()).postDelayed({ isDataReady = true }, 1000)
         val content: View = findViewById(android.R.id.content)
         content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
@@ -64,10 +65,9 @@ class AuthActivity : AppCompatActivity() {
             }
         })
 
-        auth = Firebase.auth
+        auth = FirebaseAuth.getInstance()
         credentialManager = CredentialManager.create(this)
 
-        // Jika sudah login, langsung ke MainActivity
         auth.currentUser?.let {
             navigateToMain(it)
             return
@@ -80,15 +80,15 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    /** ----- Google Sign-In (modern) via Credential Manager + Google Identity ----- */
     private fun signInWithGoogle() {
         updateUI(isLoading = true)
+        val nonce = generateNonce()
 
-        // Opsi Google ID (pastikan default_web_client_id adalah **Web client ID** dari Firebase console)
         val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false) // true jika ingin hanya akun yg sudah di-authorize
+            .setFilterByAuthorizedAccounts(false)
             .setServerClientId(getString(R.string.default_web_client_id))
-            .setAutoSelectEnabled(false) // true jika ingin auto select saat hanya ada 1 opsi
+            .setAutoSelectEnabled(true)
+            .setNonce(nonce)
             .build()
 
         val request = GetCredentialRequest.Builder()
@@ -102,11 +102,21 @@ class AuthActivity : AppCompatActivity() {
                 if (credential is CustomCredential &&
                     credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
                 ) {
-                    val googleIdTokenCredential =
-                        GoogleIdTokenCredential.createFrom(credential.data)
-                    val idToken = googleIdTokenCredential.idToken
-                    Log.d(TAG, "Google ID Token acquired")
-                    firebaseAuthWithGoogle(idToken)
+                    try {
+                        val googleIdTokenCredential =
+                            GoogleIdTokenCredential.createFrom(credential.data)
+                        val idToken = googleIdTokenCredential.idToken
+                        Log.d(TAG, "Google ID Token acquired")
+                        firebaseAuthWithGoogle(idToken)
+                    } catch (e: GoogleIdTokenParsingException) {
+                        Log.e(TAG, "Received an invalid google id token response", e)
+                        Toast.makeText(
+                            this@AuthActivity,
+                            "Gagal mem-parsing token Google",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        updateUI(false)
+                    }
                 } else {
                     Log.w(TAG, "Unexpected credential type: ${credential.javaClass.name}")
                     Toast.makeText(
@@ -118,9 +128,10 @@ class AuthActivity : AppCompatActivity() {
                 }
             } catch (e: GetCredentialException) {
                 Log.w(TAG, "getCredential() failed", e)
-                val userMsg = when (e.javaClass.simpleName) {
-                    "NoCredentialException" -> "Login dibatalkan atau tidak ada akun yang dipilih"
-                    else -> "Gagal masuk: ${e.localizedMessage ?: "Kesalahan tidak diketahui"}"
+                val userMsg = when (e) {
+                    is NoCredentialException -> "Tidak ada akun yang dipilih untuk login."
+                    is GetCredentialCancellationException -> "Proses login dibatalkan."
+                    else -> "Gagal masuk: ${e.message ?: "Kesalahan tidak diketahui"}"
                 }
                 Toast.makeText(this@AuthActivity, userMsg, Toast.LENGTH_SHORT).show()
                 updateUI(false)
@@ -136,7 +147,6 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    /** Firebase auth menggunakan Google ID token */
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
@@ -152,7 +162,6 @@ class AuthActivity : AppCompatActivity() {
             }
     }
 
-    /** ----- UI helpers ----- */
     private fun navigateToMain(user: FirebaseUser?) {
         if (user == null) return
         val intent = Intent(this, MainActivity::class.java).apply {
@@ -186,5 +195,12 @@ class AuthActivity : AppCompatActivity() {
     private fun updateUI(isLoading: Boolean) {
         binding.buttonGoogleSignIn.isEnabled = !isLoading
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun generateNonce(length: Int = 16): String {
+        val random = SecureRandom()
+        val bytes = ByteArray(length)
+        random.nextBytes(bytes)
+        return bytes.joinToString("") { "%02x".format(it) }
     }
 }

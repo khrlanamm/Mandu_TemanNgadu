@@ -16,14 +16,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.functions
-import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.databinding.ActivityReportBinding
@@ -97,7 +96,7 @@ class ReportActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
-        functions = Firebase.functions("us-central1")
+        functions = FirebaseFunctions.getInstance("us-central1")
 
         setupToolbar()
         setupDropdown()
@@ -177,7 +176,7 @@ class ReportActivity : AppCompatActivity() {
         val url = "https://wa.me/$phoneNumber"
         try {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
+            intent.data = url.toUri()
             startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(this, "WhatsApp tidak terpasang.", Toast.LENGTH_SHORT).show()

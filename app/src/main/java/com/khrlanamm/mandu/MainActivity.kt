@@ -22,8 +22,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.auth
-import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.khrlanamm.mandu.databinding.ActivityMainBinding
 import com.khrlanamm.mandu.model.ArticleAdapter
 import com.khrlanamm.mandu.model.HomeViewModel
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkUserAndSaveToken() {
-        if (Firebase.auth.currentUser != null) {
+        if (FirebaseAuth.getInstance().currentUser != null) {
             MyFirebaseMessagingService.saveTokenIfAdmin()
         }
     }
@@ -123,7 +122,8 @@ class MainActivity : AppCompatActivity() {
 
         homeViewModel.noResultsFound.observe(this) { noResults ->
             if (noResults) {
-                Toast.makeText(this, "Artikel yang anda cari belum tersedia", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Artikel yang anda cari belum tersedia", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -188,7 +188,11 @@ class MainActivity : AppCompatActivity() {
                 if (backPressedTime + 2000 > System.currentTimeMillis()) {
                     finishAffinity()
                 } else {
-                    Toast.makeText(this@MainActivity, "Tekan sekali lagi untuk keluar", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Tekan sekali lagi untuk keluar",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 backPressedTime = System.currentTimeMillis()
             }
@@ -211,6 +215,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+
             R.id.action_history -> {
                 val intent = Intent(this, HistoryActivity::class.java).apply {
                     putExtras(extras)
@@ -218,6 +223,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
