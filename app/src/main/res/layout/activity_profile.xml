@@ -41,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:contentDescription="@string/cd_profile_picture"
             android:src="@drawable/app_logo"
             tools:srcCompat="@tools:sample/avatars" />
     </com.google.android.material.card.MaterialCardView>
@@ -92,7 +93,7 @@
         android:padding="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="24dp"
-        android:text="Alan Budikusuma"
+        android:text="@string/sample_user_name"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/label_name"
@@ -117,7 +118,7 @@
         android:padding="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginHorizontal="24dp"
-        android:text="alan@gmail.com"
+        android:text="@string/sample_user_email"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/label_email"

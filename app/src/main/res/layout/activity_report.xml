@@ -36,7 +36,7 @@
         android:backgroundTint="@color/tosca_mandu_dark"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
-        android:text="Kirim Laporan"
+        android:text="@string/button_send_report"
         android:textColor="?attr/colorOnPrimary"
         app:cornerRadius="24dp"
         app:icon="@android:drawable/ic_menu_send"
@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Formulir Pelaporan Bullying (LaBu)"
+                    android:text="@string/title_report_form"
                     android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     android:textStyle="bold" />
 
@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="Laporan Bersifat Anonim"
+                    android:text="@string/subtitle_report_form_anonymous"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
                 <RadioGroup
@@ -102,13 +102,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="32dp"
-                        android:text="Korban" />
+                        android:text="@string/radio_button_victim" />
 
                     <RadioButton
                         android:id="@+id/radio_saksi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Saksi" />
+                        android:text="@string/radio_button_witness" />
                 </RadioGroup>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -117,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Tanggal Bullying"
+                    android:hint="@string/hint_bullying_date"
                     app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -135,7 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Lokasi Bullying"
+                    android:hint="@string/hint_bullying_location"
                     app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -152,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Frekuensi Bullying"
+                    android:hint="@string/hint_bullying_frequency"
                     app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <AutoCompleteTextView
@@ -170,7 +170,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Deskripsi (Kronologi)"
+                    android:hint="@string/hint_description_chronology"
                     app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -189,7 +189,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:hint="Nomor yang dapat dihubungi (WhatsApp)"
+                    android:hint="@string/hint_whatsapp_number"
                     app:boxStrokeColor="@color/tosca_mandu_dark">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -205,7 +205,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_marginTop="16dp"
-                    android:contentDescription="Preview Bukti"
+                    android:contentDescription="@string/cd_proof_preview"
                     android:scaleType="centerCrop"
                     android:visibility="gone"
                     tools:src="@tools:sample/backgrounds/scenic" />
@@ -218,7 +218,7 @@
                     android:layout_marginTop="16dp"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:text="Unggah Gambar/Bukti"
+                    android:text="@string/button_upload_proof"
                     app:cornerRadius="24dp"
                     app:strokeColor="@color/tosca_mandu_dark"
                     android:textColor="@color/tosca_mandu_dark"/>
@@ -233,7 +233,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="8dp"
-        android:contentDescription="Hubungi Bimbingan Konseling via WhatsApp"
+        android:contentDescription="@string/cd_contact_counseling_whatsapp"
         app:backgroundTint="#25D366"
         app:layout_constraintBottom_toTopOf="@id/button_kirim_laporan"
         app:layout_constraintEnd_toEndOf="parent"

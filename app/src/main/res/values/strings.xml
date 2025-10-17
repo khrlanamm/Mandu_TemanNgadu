@@ -27,6 +27,9 @@
     <string name="action_account">Akun</string>
     <string name="user_role">PENGGUNA</string>
     <string name="admin_role">ADMIN</string>
+    <string name="cd_profile_picture">Foto Profil Pengguna</string>
+    <string name="sample_user_name">Alan Budikusuma</string>
+    <string name="sample_user_email">alan@gmail.com</string>
 
     <!--Report-->
     <string name="action_report">LaBu</string>
@@ -37,6 +40,19 @@
         <item>Sangat Sering</item>
         <item>Setiap Hari</item>
     </string-array>
+    <string name="button_send_report">Kirim Laporan</string>
+    <string name="title_report_form">Formulir Pelaporan Bullying (LaBu)</string>
+    <string name="subtitle_report_form_anonymous">Laporan Bersifat Anonim</string>
+    <string name="radio_button_victim">Korban</string>
+    <string name="radio_button_witness">Saksi</string>
+    <string name="hint_bullying_date">Tanggal Bullying</string>
+    <string name="hint_bullying_location">Lokasi Bullying</string>
+    <string name="hint_bullying_frequency">Frekuensi Bullying</string>
+    <string name="hint_description_chronology">Deskripsi (Kronologi)</string>
+    <string name="hint_whatsapp_number">Nomor yang dapat dihubungi (WhatsApp)</string>
+    <string name="cd_proof_preview">Preview Bukti</string>
+    <string name="button_upload_proof">Unggah Gambar/Bukti</string>
+    <string name="cd_contact_counseling_whatsapp">Hubungi Bimbingan Konseling via WhatsApp</string>
 
     <!--History-->
     <string name="action_history">Riwayat Laporan</string>
@@ -55,10 +71,24 @@
     <string name="status_handled">DITANGANI</string>
     <string name="role_victim">KORBAN</string>
     <string name="role_witness">SAKSI</string>
-
+    <string name="hint_filter_date_range">Filter Rentang Tanggal</string>
+    <string name="text_all_time">Semua Waktu</string>
+    <string name="cd_clear_date_filter">Hapus filter tanggal</string>
+    <string name="title_report_statistics">Statistik Laporan</string>
+    <string name="hint_filter_report_status">Filter Status Laporan</string>
+    <string name="text_all_reports">Semua Laporan</string>
 
     <!--Detail-->
     <string name="action_detail">Rincian Laporan</string>
+    <string name="label_report_time">Waktu Lapor</string>
+    <string name="label_date_of_incident">Tanggal Kejadian</string>
+    <string name="label_location_of_incident">Lokasi Kejadian</string>
+    <string name="label_frequency_of_incident">Frekuensi Kejadian</string>
+    <string name="label_full_description">Deskripsi Lengkap</string>
+    <string name="label_reporter_number">Nomor Pelapor</string>
+    <string name="switch_mark_as_handled">Tandai sebagai Ditangani</string>
+    <string name="button_contact_reporter">Hubungi Pelapor</string>
+    <string name="button_cancel_report">Batalkan Laporan</string>
 
     <!--article-->
     <string name="article_summary">Lorem Ipsum Dolor Sir Amet</string>

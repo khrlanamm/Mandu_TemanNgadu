@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Filter Rentang Tanggal"
+            android:hint="@string/hint_filter_date_range"
             app:startIconDrawable="@drawable/ic_date_range">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -57,7 +57,7 @@
                 android:clickable="true"
                 android:cursorVisible="false"
                 android:focusable="false"
-                android:text="Semua Waktu" />
+                android:text="@string/text_all_time" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,7 +67,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Hapus filter tanggal"
+            android:contentDescription="@string/cd_clear_date_filter"
             android:src="@drawable/ic_clear"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -96,7 +96,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Statistik Laporan"
+                android:text="@string/title_report_statistics"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -149,7 +149,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Filter Status Laporan"
+        android:hint="@string/hint_filter_report_status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/card_stats">
@@ -159,7 +159,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
-            android:text="Semua Laporan" />
+            android:hint="@string/hint_filter_report_status"
+            android:text="@string/text_all_reports" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
