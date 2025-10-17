@@ -77,9 +77,10 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
-    // Glide
+    // Glide & Shimmer
     implementation(libs.glide)
     ksp(libs.compiler)
+    implementation(libs.shimmer)
 
     // Google Identity / Credentials
     implementation(libs.androidx.credentials)
@@ -89,7 +90,7 @@ dependencies {
     // Google Sign-In
     implementation(libs.play.services.auth)
 
-    // Firebase (tanpa -ktx, mengikuti BoM v34+)
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)

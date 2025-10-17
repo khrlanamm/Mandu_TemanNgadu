@@ -7,14 +7,12 @@
     android:background="@color/tosca_mandu_light"
     tools:context=".MainActivity">
 
-    <!-- AppBarLayout diberi warna latar belakang tosca_mandu -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/tosca_mandu">
 
-        <!-- Toolbar dibuat transparan agar warna AppBarLayout yang terlihat -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -125,7 +123,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/opening" />
 
-            <!-- Deskripsi Artikel (Statis) -->
             <TextView
                 android:id="@+id/articleDescription"
                 android:layout_width="0dp"
@@ -138,7 +135,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ArticleTitle" />
 
-            <!-- Pencarian (Statis) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/searchArticle"
                 android:layout_width="0dp"
@@ -160,7 +156,6 @@
                     android:queryHint="@string/searchArticle" />
             </androidx.cardview.widget.CardView>
 
-            <!-- RecyclerView (Hanya bagian ini yang bisa di-scroll) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/ArticlesRecyclerView"
                 android:layout_width="0dp"
@@ -175,7 +170,6 @@
                 tools:itemCount="5"
                 tools:listitem="@layout/item_article" />
 
-            <!--  ProgressBar untuk indikator loading awal -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyle"

@@ -3,6 +3,7 @@ package com.khrlanamm.mandu.model
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.khrlanamm.mandu.R
 import com.khrlanamm.mandu.ui.article.ArticleDetailActivity
 
@@ -39,6 +46,7 @@ class ArticleAdapter(private val context: Context, private var articles: List<Ar
         private val title: TextView = view.findViewById(R.id.articleTitle)
         private val description: TextView = view.findViewById(R.id.articleDescription)
         private val image: ImageView = view.findViewById(R.id.articleImage)
+        private val shimmerLayout: ShimmerFrameLayout = view.findViewById(R.id.shimmer_view_container)
 
         init {
             itemView.setOnClickListener {
@@ -59,10 +67,41 @@ class ArticleAdapter(private val context: Context, private var articles: List<Ar
             title.text = article.title
             description.text = article.description
 
+            // Mulai efek shimmer
+            shimmerLayout.startShimmer()
+
+            // Atur opsi permintaan, termasuk timeout 10 detik
+            val requestOptions = RequestOptions()
+                .timeout(10000) // 10000 milidetik = 10 detik
+
             Glide.with(context)
                 .load(article.image)
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.placeholder_image)
+                .apply(requestOptions) // Terapkan opsi timeout
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        // Hentikan dan sembunyikan shimmer drawable saat gagal.
+                        shimmerLayout.hideShimmer()
+                        return false // Mengembalikan false agar Glide dapat menampilkan gambar error
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        // Hentikan dan sembunyikan shimmer drawable saat gambar siap.
+                        shimmerLayout.hideShimmer()
+                        return false // Mengembalikan false agar Glide dapat menampilkan gambar yang sudah dimuat
+                    }
+                })
+                .error(R.drawable.placeholder_image) // Menampilkan gambar placeholder jika terjadi error
                 .into(image)
         }
     }
